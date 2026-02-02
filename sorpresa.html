@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sorpresa ✨</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="fade-in">
+  <div class="bg"></div>
+  <div class="hearts"></div>
+  <div class="heart-burst" id="burst"></div>
+
+  <audio id="bgm" preload="auto" loop>
+    <source src="UWAIE - Kapo (Video Oficial).mp3" type="audio/mpeg">
+  </audio>
+
+  <main class="page">
+    <div class="container">
+      <section class="card">
+        <p class="mini">Sorpresa ✨</p>
+        <h1>Te pienso más de lo que crees</h1>
+        <p>y aunque estés lejos, quería estar cerquita de alguna forma.</p>
+
+        <div class="letter" style="text-align:left">
+         ️
+          <p style="margin:0">
+            <b>Hola preciosa 🤍❣️</b><br><br>
+            Para comenzar este pequeño detalle mi amor que espero te guste y te haya sorprendido al menos, quiero que sepas que te amo mucho, se que nuestra historia juntos acaba de comenzar y no llevamos mucho tiempo conociéndonos como pareja, aun así siento que te conozco bien amor, confío en ti y puedo entregarme a ti mi amor.<br><br>
+
+            Tal vez yo no sea el chico más romántico o tal vez detallista, trato de mejorar eso mi amor por ti. Quiero que te sientas valorada y amada por mi. Quiero que a pesar de todo tu pasado tal vez que te fallaron, igual a mí, no sientas que yo te haré lo mismo mi amor. Quiero que confíes en mí.<br><br>
+
+            También quiero estar juntos para ver nuestros logros juntos, vivir muchas experiencias, viajar, salir, comer, bailar, tomar algo… así sea lo que sea pero estar juntos. Sé que no te esperabas que sucediera lo de nosotros, igual que yo, pero es la cosa más bonita que me pasó. Espero que sea el tuyo también amor.<br><br>
+
+            Tal vez este viaje al comienzo de nuestra historia es un reto fuerte, porque por lo general al comienzo de una relación es estar siempre juntos y conocernos… pero a pesar de eso, no quita el hecho que yo me enamoré cada día más de ti. Si superamos esto (y lo tomo por hecho) sé que estaremos juntos toda la vida.<br><br>
+
+            Quiero que te diviertas, te relajes y me extrañes mucho mi amor. Te extraño mucho amor, y quería que tengas algo bonito para este 14, porque es nuestro primer 14. Te lo mandaré días antes porque quería saber…
+          </p>
+        </div>
+
+        <!-- Botones en columna, centrados -->
+        <div class="stack">
+          <button class="btn primary big pulse" id="btnAsk" type="button">¿Quieres ser mi 14 de febrero? 💘</button>
+          <button class="btn" id="goRecuerdos" type="button">Recuerdos 📸</button>
+          <button class="btn" id="goVolver" type="button">Volver ↩️</button>
+        </div>
+
+        <div class="reveal" id="reveal" aria-hidden="true">
+          <p class="bigTitle">✨ Gracias mi amor por aceptarme 💗</p>
+          <p class="bigText">
+            Aunque sea a la distancia, mi amor, tú sabes que siempre te voy a amar. Gracias por darme la oportunidad de vivir este 14 contigo.<br><br>
+            Sé que ahora será diferente… pero más adelante lo celebraremos como se debe juntos mi amor.<br>
+            <b>PD:</b> llegando, nuestra cita queda pendiente mi amor. 💗
+          </p>
+
+          <div class="row" style="margin-top:14px">
+            <a class="btn primary" target="_blank" rel="noopener"
+              href="https://wa.me/51990367042?text=Sí%20💘%20acepto%20ser%20tu%2014%20de%20febrero">
+              Decirte que SÍ por WhatsApp 💬
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Player fijo abajo-derecha -->
+  <div class="player" aria-label="Reproductor">
+    <button class="btn primary" id="playBtn" type="button">▶</button>
+    <small>UWAIE - Kapo</small>
+  </div>
+
+  <script>
+    function pageGo(url){
+      document.body.classList.add('fade-out');
+      setTimeout(()=> location.href = url, 240);
+    }
+    document.getElementById('goRecuerdos').addEventListener('click', ()=> pageGo('recuerdos.html'));
+    document.getElementById('goVolver').addEventListener('click', ()=> pageGo('index.html'));
+
+    // Muchos corazones al click
+    function heartsBurst(){
+      const wrap = document.getElementById('burst');
+      wrap.innerHTML = '';
+      const n = 160;
+      for(let i=0;i<n;i++){
+        const h = document.createElement('i');
+        h.textContent = '❤';
+        h.style.left = (Math.random()*100) + 'vw';
+        h.style.fontSize = (14 + Math.random()*28) + 'px';
+        h.style.animationDelay = (Math.random()*0.35) + 's';
+        h.style.opacity = (0.65 + Math.random()*0.35).toFixed(2);
+        wrap.appendChild(h);
+      }
+      setTimeout(()=> wrap.innerHTML='', 2300);
+    }
+
+    const btnAsk = document.getElementById('btnAsk');
+    const reveal = document.getElementById('reveal');
+
+    btnAsk.addEventListener('click', ()=>{
+      heartsBurst();
+      reveal.classList.add('show');
+      reveal.setAttribute('aria-hidden','false');
+      if(navigator.vibrate) navigator.vibrate([30,20,30]);
+    });
+  </script>
+
+  <script src="app.js"></script>
+</body>
+</html>

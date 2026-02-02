@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Recuerdos 📸</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="fade-in">
+  <div class="bg"></div>
+  <div class="hearts"></div>
+
+  <audio id="bgm" preload="auto" loop>
+    <source src="UWAIE - Kapo (Video Oficial).mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- COUNTDOWN: SOLO UNO (dock grande fijo) -->
+  <aside class="countdown-dock" id="countdownDock" aria-live="polite">
+    <div class="cd-title">Faltan para volver a vernos, mi amor ✨</div>
+    <div class="cd-clock-grid">
+      <div class="cd-chip"><span class="cd-num" id="cdDays">--</span><span class="cd-lab">DÍAS</span></div>
+      <div class="cd-chip"><span class="cd-num" id="cdHours">--</span><span class="cd-lab">HRS</span></div>
+      <div class="cd-chip"><span class="cd-num" id="cdMins">--</span><span class="cd-lab">MIN</span></div>
+      <div class="cd-chip"><span class="cd-num" id="cdSecs">--</span><span class="cd-lab">SEG</span></div>
+    </div>
+  </aside>
+
+  <main class="page">
+    <div class="container">
+      <section class="card">
+        <p class="mini">Recuerdos 📸</p>
+        <h1>Momentos que me hacen sonreír</h1>
+        <p>Toca una foto para verla mejor.</p>
+
+        <div class="section-title">Juntos 🤍 (A1, A2)</div>
+        <div class="gallery">
+          <img class="photo" src="fotos/A1.jpeg" alt="A1">
+          <img class="photo" src="fotos/A2.jpeg" alt="A2">
+        </div>
+
+        <div class="section-title">Cosas que me gustan y me hacen amarte ✨ (D1–D5)</div>
+        <div class="gallery">
+          <img class="photo" src="fotos/D1.jpeg" alt="D1">
+          <img class="photo" src="fotos/D2.jpeg" alt="D2">
+          <img class="photo" src="fotos/D3.jpeg" alt="D3">
+          <img class="photo" src="fotos/D4.jpeg" alt="D4">
+          <img class="photo" src="fotos/D5.jpeg" alt="D5">
+        </div>
+
+        <div class="section-title">Más momentos 📱 (WhatsApp)</div>
+        <div class="gallery">
+          <!-- OJO: aquí van URL-ENCODED automáticamente por app.js en el modal,
+               pero el src igual debe estar bien: usa %20 para espacios -->
+          <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.11.17%20AM.jpeg" alt="WhatsApp 1">
+          <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.16.44%20AM.jpeg" alt="WhatsApp 2">
+          <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.22.03%20AM.jpeg" alt="WhatsApp 3">
+        </div>
+
+        <div class="row" style="margin-top:16px">
+          <button class="btn primary" id="backCarta" type="button">Volver a la carta 💌</button>
+          <button class="btn" id="backInicio" type="button">Inicio ↩️</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal-bg" id="modalBg"></div>
+    <button class="modal-close" id="modalClose" type="button" aria-label="Cerrar">✕</button>
+    <div class="modal-box" role="dialog" aria-modal="true" aria-label="Vista de foto">
+      <img class="modal-img" id="modalImg" alt="Foto ampliada">
+    </div>
+  </div>
+
+  <!-- Player fijo abajo-derecha -->
+  <div class="player" aria-label="Reproductor">
+    <button class="btn primary" id="playBtn" type="button">▶</button>
+    <small>UWAIE - Kapo</small>
+  </div>
+
+  <script>
+    function pageGo(url){
+      document.body.classList.add('fade-out');
+      setTimeout(()=> location.href = url, 240);
+    }
+    document.getElementById('backCarta').addEventListener('click', ()=> pageGo('sorpresa.html'));
+    document.getElementById('backInicio').addEventListener('click', ()=> pageGo('index.html'));
+  </script>
+
+  <script src="app.js"></script>
+</body>
+</html>

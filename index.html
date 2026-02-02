@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Para mi persona favorita 💗</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="fade-in">
+  <div class="bg"></div>
+  <div class="hearts"></div>
+
+  <audio id="bgm" preload="auto" loop>
+    <source src="UWAIE - Kapo (Video Oficial).mp3" type="audio/mpeg">
+  </audio>
+
+  <main class="page">
+    <div class="container">
+      <section class="card hero">
+        <p class="mini">Para ti, mi amor</p>
+        <h1>Lo mejor que me pasó este año…</h1>
+        <p class="lead">te hice algo especial. Espero te guste. <b>Hecho con amor</b> 💗</p>
+
+        <div class="row" style="margin-top:14px">
+          <button class="btn primary pulse" id="btnStart">Ver sorpresa ✨</button>
+        </div>
+
+        <p class="hint">Mi amor, ábrelo con calma y con audífonos 😌</p>
+      </section>
+    </div>
+  </main>
+
+  <!-- Player fijo abajo-derecha -->
+  <div class="player" aria-label="Reproductor">
+    <button class="btn primary" id="playBtn" type="button">▶</button>
+    <small>UWAIE - Kapo</small>
+  </div>
+
+  <script>
+    // Ir a sorpresa con transición
+    document.getElementById('btnStart').addEventListener('click', ()=>{
+      document.body.classList.add('fade-out');
+      setTimeout(()=> location.href = 'sorpresa.html', 240);
+    });
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>
