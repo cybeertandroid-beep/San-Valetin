@@ -1,264 +1,172 @@
-:root{
-  --bg-solid:#fdecef;
-  --ink:#2b2b2b;
-  --pink:#ff5e91;
-  --pink-2:#ff7faa;
-  --card:#fff7f9;
-  --stroke:rgba(255, 94, 145, .25);
+(() => {
+  const meta = (name, fallback="") =>
+    document.querySelector(`meta[name="${name}"]`)?.content?.trim() || fallback;
 
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  const COUNTDOWN_TO = meta("countdown-to", "2026-04-12T00:00:00-05:00");
+  const AUDIO_SRC = meta("site-audio", "audio/uwaie.mp3");
+  const WA_NUMBER = meta("wa-number", "51999999999"); // cambia aquí o en <meta>
 
-  --topbar-space: 0px; /* lo calcula JS */
-}
+  // =========================
+  // TOPBAR (contador) en TODAS
+  // =========================
+  const topbar = document.createElement("div");
+  topbar.id = "topbar";
+  topbar.innerHTML = `
+    <div class="countdown" role="status" aria-label="Cuenta regresiva">
+      <div class="countdown__title">
+        <span>Faltan para volver a vernos</span>
+        <span class="heart">💗</span>
+      </div>
+      <div class="countdown__grid">
+        <div class="cd-box"><strong id="cd-d">--</strong><small>DÍAS</small></div>
+        <div class="cd-box"><strong id="cd-h">--</strong><small>HRS</small></div>
+        <div class="cd-box"><strong id="cd-m">--</strong><small>MIN</small></div>
+        <div class="cd-box"><strong id="cd-s">--</strong><small>SEG</small></div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(topbar);
 
-html, body{
-  height:100%;
-  background: var(--bg-solid) !important;
-}
+  const setTopSpace = () => {
+    const h = topbar.getBoundingClientRect().height;
+    document.documentElement.style.setProperty("--topbar-space", `${h + 12}px`);
+  };
+  window.addEventListener("resize", setTopSpace);
+  setTopSpace();
 
-body{
-  margin:0;
-  color:var(--ink);
-  overflow-x:hidden;
-  padding-top: calc(var(--topbar-space) + 10px);
-}
+  // Countdown logic
+  const elD = topbar.querySelector("#cd-d");
+  const elH = topbar.querySelector("#cd-h");
+  const elM = topbar.querySelector("#cd-m");
+  const elS = topbar.querySelector("#cd-s");
 
-/* Fondo uniforme (sin “dos colores” al bajar) */
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:-2;
-  pointer-events:none;
-  background:
-    radial-gradient(1200px 700px at 15% 10%, rgba(255, 94, 145, .22), transparent 55%),
-    radial-gradient(900px 600px at 85% 30%, rgba(255, 164, 188, .18), transparent 55%),
-    linear-gradient(180deg, #fdecef 0%, #fdecef 100%);
-}
+  const target = new Date(COUNTDOWN_TO);
+  const pad2 = (n) => String(Math.max(0, n)).padStart(2, "0");
 
-.bg, .page, main, .container{
-  background: transparent !important;
-}
+  function tick(){
+    const now = new Date();
+    let diff = target.getTime() - now.getTime();
+    if (diff < 0) diff = 0;
 
-/* =========================
-   TOPBAR (CONTADOR)
-   ========================= */
-#topbar{
-  position:fixed;
-  top: calc(10px + var(--safe-top));
-  left: 12px;
-  z-index: 9999;
-  width: min(92vw, 360px);
-}
+    const totalSeconds = Math.floor(diff / 1000);
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const mins = Math.floor((totalSeconds % 3600) / 60);
+    const secs = totalSeconds % 60;
 
-@media (max-width: 520px){
-  #topbar{
-    left: 50%;
-    transform: translateX(-50%);
-    width: min(94vw, 420px);
+    elD.textContent = days;
+    elH.textContent = pad2(hours);
+    elM.textContent = pad2(mins);
+    elS.textContent = pad2(secs);
   }
-}
+  tick();
+  setInterval(tick, 1000);
 
-.countdown{
-  background: rgba(255,255,255,.78);
-  border: 1px solid rgba(255,255,255,.7);
-  border-radius: 18px;
-  padding: 10px 12px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.10);
-  backdrop-filter: blur(10px);
-}
-
-.countdown__title{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  font-weight: 700;
-  font-size: 13px;
-  line-height: 1.2;
-  margin-bottom: 8px;
-}
-
-.countdown__title .heart{
-  font-size: 18px;
-  color: var(--pink);
-}
-
-.countdown__grid{
-  display:grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-}
-
-.cd-box{
-  background: rgba(255,255,255,.9);
-  border: 1px solid rgba(255, 94, 145, .12);
-  border-radius: 14px;
-  padding: 8px 6px;
-  text-align:center;
-}
-
-.cd-box strong{
-  display:block;
-  font-size: 20px;
-  color: var(--pink);
-  line-height: 1;
-}
-
-.cd-box small{
-  display:block;
-  font-size: 11px;
-  opacity:.8;
-  margin-top: 4px;
-  letter-spacing: .6px;
-}
-
-/* Extra compacto en móvil */
-@media (max-width: 380px){
-  .cd-box strong{ font-size: 18px; }
-  .countdown__title{ font-size: 12px; }
-}
-
-/* =========================
-   PLAYER ABAJO (NO ESTORBA)
-   ========================= */
-#playerDock{
-  position:fixed;
-  right: 14px;
-  bottom: calc(14px + var(--safe-bottom));
-  z-index: 9999;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  pointer-events:none; /* importante: no bloquea scroll */
-}
-
-.player-pill{
-  pointer-events:auto; /* solo el botón es clickeable */
-  display:flex;
-  align-items:center;
-  gap:10px;
-
-  padding: 10px 12px;
-  border-radius: 18px;
-  background: rgba(255,255,255,.82);
-  border: 1px solid rgba(255,255,255,.75);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgba(0,0,0,.12);
-  user-select:none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.player-btn{
-  width: 44px;
-  height: 44px;
-  border:none;
-  border-radius: 14px;
-  cursor:pointer;
-  background: linear-gradient(135deg, var(--pink), var(--pink-2));
-  color:white;
-  display:grid;
-  place-items:center;
-  font-size: 18px;
-}
-
-.player-text{
-  font-weight: 700;
-  font-size: 13px;
-  line-height: 1.1;
-  white-space: nowrap;
-}
-
-/* En móvil lo centramos abajo */
-@media (max-width: 520px){
-  #playerDock{
-    left: 50%;
-    right: auto;
-    transform: translateX(-50%);
+  // =========================
+  // AUDIO: iPhone requiere toque (sin autoplay)
+  // =========================
+  let audio = document.getElementById("bgm");
+  if (!audio){
+    audio = document.createElement("audio");
+    audio.id = "bgm";
+    audio.loop = true;
+    audio.preload = "auto";
+    audio.setAttribute("playsinline", "");
+    document.body.appendChild(audio);
   }
-}
+  audio.src = AUDIO_SRC;
 
-/* Si el modal está abierto, ocultamos topbar y player */
-body.modal-open #playerDock,
-body.modal-open #topbar{
-  opacity:0;
-  pointer-events:none;
-}
+  // Player abajo (mini)
+  const dock = document.createElement("div");
+  dock.id = "playerDock";
+  dock.innerHTML = `
+    <div class="player-pill">
+      <button class="player-btn" id="plBtn" aria-label="Reproducir/Pausar">▶</button>
+      <div class="player-text">Toca para reproducir</div>
+    </div>
+  `;
+  document.body.appendChild(dock);
 
-/* =========================
-   CARTA con corazones
-   ========================= */
-.letter, .card.letter, .message-box{
-  position: relative;
-  overflow:hidden;
-}
+  const plBtn = dock.querySelector("#plBtn");
 
-.letter::before, .message-box::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background-image:
-    radial-gradient(circle at 20% 20%, rgba(255,94,145,.12) 0 2px, transparent 3px),
-    radial-gradient(circle at 80% 30%, rgba(255,94,145,.10) 0 2px, transparent 3px),
-    radial-gradient(circle at 30% 80%, rgba(255,94,145,.10) 0 2px, transparent 3px);
-  opacity:.8;
-  pointer-events:none;
-}
+  function ui(){
+    plBtn.textContent = audio.paused ? "▶" : "⏸";
+  }
+  ui();
 
-.letter::after, .message-box::after{
-  content:"💗";
-  position:absolute;
-  right: 14px;
-  top: 12px;
-  font-size: 18px;
-  opacity: .9;
-}
+  async function tryPlay(){
+    audio.muted = false;
+    try{ await audio.play(); }catch(e){ /* iOS: solo con gesto */ }
+    ui();
+  }
 
-/* =========================
-   MODAL DE FOTOS (FIX iOS)
-   ========================= */
-#lightbox{
-  position:fixed;
-  inset:0;
-  z-index: 99999;
-  background: rgba(0,0,0,.55);
-  display:none;
-  overflow:auto;
-  -webkit-overflow-scrolling: touch;
-}
+  plBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    if (audio.paused) await tryPlay();
+    else audio.pause();
+    ui();
+  });
 
-#lightbox.open{ display:block; }
+  // Primer toque en la página también puede iniciar audio
+  const firstGesture = async () => {
+    if (audio.paused) await tryPlay();
+    document.removeEventListener("touchstart", firstGesture);
+    document.removeEventListener("pointerdown", firstGesture);
+  };
+  document.addEventListener("touchstart", firstGesture, { passive:true, once:true });
+  document.addEventListener("pointerdown", firstGesture, { passive:true, once:true });
 
-.lb-inner{
-  min-height: 100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding: calc(60px + var(--safe-top)) 14px calc(90px + var(--safe-bottom)) 14px;
-}
+  audio.addEventListener("play", ui);
+  audio.addEventListener("pause", ui);
 
-.lb-img{
-  max-width: min(92vw, 980px);
-  max-height: 75vh;
-  width:auto;
-  height:auto;
-  border-radius: 16px;
-  box-shadow: 0 14px 50px rgba(0,0,0,.35);
-  object-fit: contain;
-  background: rgba(255,255,255,.08);
-}
+  // =========================
+  // WhatsApp sin mensaje automático
+  // =========================
+  document.querySelectorAll("[data-wa]").forEach(a => {
+    a.setAttribute("href", `https://wa.me/${WA_NUMBER}`);
+    a.setAttribute("target", "_blank");
+    a.setAttribute("rel", "noopener");
+  });
 
-.lb-close{
-  position:fixed;
-  top: calc(12px + var(--safe-top));
-  right: 12px;
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,.5);
-  background: rgba(255,255,255,.85);
-  cursor:pointer;
-  font-size: 22px;
-  display:grid;
-  place-items:center;
-}
+  // =========================
+  // Lightbox pro para .gallery img
+  // =========================
+  let lb = document.getElementById("lightbox");
+  if (!lb){
+    lb = document.createElement("div");
+    lb.id = "lightbox";
+    lb.innerHTML = `
+      <button class="lb-close" type="button" aria-label="Cerrar">×</button>
+      <div class="lb-inner">
+        <img class="lb-img" alt="Foto ampliada" />
+      </div>
+    `;
+    document.body.appendChild(lb);
+  }
+
+  const lbImg = lb.querySelector(".lb-img");
+  const lbClose = lb.querySelector(".lb-close");
+
+  function openLB(src){
+    document.body.classList.add("modal-open");
+    lb.classList.add("open");
+    lbImg.src = src;
+  }
+  function closeLB(){
+    lb.classList.remove("open");
+    document.body.classList.remove("modal-open");
+    lbImg.src = "";
+  }
+
+  lbClose.addEventListener("click", closeLB);
+  lb.addEventListener("click", (e) => { if (e.target === lb) closeLB(); });
+
+  document.querySelectorAll(".gallery img").forEach(img => {
+    img.style.cursor = "zoom-in";
+    img.addEventListener("click", () => {
+      const src = img.getAttribute("data-full") || img.currentSrc || img.src;
+      openLB(src);
+    });
+  });
+
+})();
