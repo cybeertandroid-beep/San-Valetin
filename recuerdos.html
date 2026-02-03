@@ -2,67 +2,54 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Recuerdos 💗</title>
 
-  <meta name="countdown-to" content="2026-04-12T00:00:00-05:00">
-  <meta name="site-audio" content="audio/uwaie.mp3">
-  <meta name="wa-number" content="51TU_NUMERO_AQUI">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="shared.css">
-  <link rel="stylesheet" href="styles.css">
-  <script defer src="shared.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="app.js"></script>
 </head>
 
-<body>
-  <div class="wrap">
-    <div class="card">
-      <div class="kicker">Recuerdos 💗</div>
-      <h1>Momentos que nunca olvidaré a tu lado</h1>
-      <p class="subtitle">Toca una foto para verla mejor.</p>
+<body data-page="recuerdos">
+  <div class="bg" aria-hidden="true"></div>
 
-      <h2 class="section-title">Fotos que me hicieron enamorarme más de ti 💗</h2>
-      <p class="section-sub">Mis favoritas… porque me derriten 💗</p>
+  <div id="floating-ui"></div>
 
-      <section class="gallery">
-        <img src="img/juntos1.jpg" alt="Foto 1">
-        <img src="img/juntos2.jpg" alt="Foto 2">
-        <img src="img/juntos3.jpg" alt="Foto 3">
-        <img src="img/juntos4.jpg" alt="Foto 4">
-        <img src="img/juntos5.jpg" alt="Foto 5">
-      </section>
-
-      <hr class="hr">
-
-      <h2 class="section-title">Momentos que me encantan de ti ✨</h2>
-      <p class="section-sub">Cosas tuyas que amo y no cambio por nada ✨</p>
-
-      <section class="gallery">
-        <img src="img/moment1.jpg" alt="Momento 1">
-        <img src="img/moment2.jpg" alt="Momento 2">
-        <img src="img/moment3.jpg" alt="Momento 3">
-        <img src="img/moment4.jpg" alt="Momento 4">
-        <img src="img/moment5.jpg" alt="Momento 5">
-      </section>
-
-      <hr class="hr">
-
-      <h2 class="section-title">Más momentos (WhatsApp) 💬</h2>
-      <p class="section-sub">Capturas, mensajitos, y cositas que me hacen sonreír 💬</p>
-
-      <section class="gallery">
-        <img src="img/ws1.jpg" alt="WhatsApp 1">
-        <img src="img/ws2.jpg" alt="WhatsApp 2">
-        <img src="img/ws3.jpg" alt="WhatsApp 3">
-      </section>
-
-      <div class="actions" style="margin-top:22px;">
-        <a class="btn btn-ghost" href="index.html">Inicio ↩</a>
-        <a class="btn btn-primary" href="cupones.html">Cupones 💗</a>
-        <a class="btn btn-ghost" href="citas.html">Citas ✨</a>
-      </div>
+  <div id="lightbox" class="lightbox" aria-hidden="true">
+    <div class="lightbox__backdrop" data-close></div>
+    <div class="lightbox__panel" role="dialog" aria-modal="true">
+      <button class="lightbox__close" type="button" aria-label="Cerrar" data-close>✕</button>
+      <img class="lightbox__img" alt="" />
     </div>
   </div>
+
+  <main class="page">
+    <section class="card hero">
+      <p class="kicker">Recuerdos 💗</p>
+      <h1 class="title">Momentos que nunca olvidaré a tu lado</h1>
+      <p class="subtitle">Toca una foto para verla mejor.</p>
+
+      <section class="block">
+        <h2 class="section-title">Momentos que nunca se me olvidarán a tu lado mi amor 💖</h2>
+        <div class="grid" id="gridA"></div>
+      </section>
+
+      <section class="block">
+        <h2 class="section-title">Fotos que me hicieron enamorar más de ti 💗</h2>
+        <div class="grid" id="gridD"></div>
+      </section>
+
+      <div class="actions">
+        <div class="btn-row">
+          <a class="btn ghost" href="index.html">Inicio 🏠</a>
+          <a class="btn ghost" href="citas.html">Citas ✨</a>
+          <a class="btn ghost" href="cupones.html">Cupones 🎟️</a>
+        </div>
+      </div>
+    </section>
+  </main>
 </body>
 </html>
