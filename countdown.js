@@ -7,7 +7,6 @@
   const cdMins  = document.getElementById('cdMins');
   const cdSecs  = document.getElementById('cdSecs');
 
-  // Si no está el dock (por ejemplo en index/sorpresa), no hace nada
   if (!cdDays || !cdHours || !cdMins || !cdSecs) return;
 
   const pad2 = (n) => String(n).padStart(2, '0');
