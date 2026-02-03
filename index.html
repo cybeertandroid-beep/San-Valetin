@@ -2,61 +2,90 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Para mi persona favorita 💗</title>
 
-  <!-- Ajusta fecha real -->
-  <meta name="countdown-to" content="2026-04-12T00:00:00-05:00">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Audio -->
-  <meta name="site-audio" content="audio/uwaie.mp3">
-
-  <!-- WhatsApp (solo abre chat) -->
-  <meta name="wa-number" content="51TU_NUMERO_AQUI">
-
-  <link rel="stylesheet" href="shared.css">
-  <link rel="stylesheet" href="styles.css">
-  <script defer src="shared.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="app.js"></script>
 </head>
 
-<body>
-  <div class="wrap">
-    <div class="card">
-      <div class="kicker">Sorpresa ✨</div>
-      <h1>Te pienso más de lo que crees</h1>
+<body data-page="home">
+  <div class="bg" aria-hidden="true"></div>
+
+  <!-- UI global (contador + reproductor) -->
+  <div id="floating-ui"></div>
+
+  <!-- Lightbox global -->
+  <div id="lightbox" class="lightbox" aria-hidden="true">
+    <div class="lightbox__backdrop" data-close></div>
+    <div class="lightbox__panel" role="dialog" aria-modal="true">
+      <button class="lightbox__close" type="button" aria-label="Cerrar" data-close>✕</button>
+      <img class="lightbox__img" alt="" />
+    </div>
+  </div>
+
+  <main class="page">
+    <section class="card hero">
+      <p class="kicker">Sorpresa ✨</p>
+      <h1 class="title">Te pienso más de lo que crees</h1>
       <p class="subtitle">y aunque estés lejos, quería estar cerquita de alguna forma.</p>
 
       <div class="letter">
-        <h3>Hola preciosa 💗</h3>
+        <div class="letter__head">
+          <h2>Hola preciosa <span aria-hidden="true">🤍</span> <span aria-hidden="true">💗</span></h2>
+          <p class="letter__hint">💞 💞 💞</p>
+        </div>
 
         <p>
-          Para comenzar este pequeño detalle mi amor, espero que te guste. Quiero que sepas que te amo mucho
-          y que estoy muy feliz de tenerte en mi vida.
+          Para comenzar este pequeño detalle mi amor que espero te guste y te haya sorprendido al menos, quiero que sepas
+          que te amo mucho, sé que nuestra historia juntos acaba de comenzar y no llevamos mucho tiempo conociéndonos como
+          pareja, aun así siento que te conozco bien amor, confío en ti y puedo entregarme a ti mi amor.
         </p>
 
         <p>
-          Aunque ahora estemos a distancia, no cambia lo que siento por ti. Al contrario… cada día me enamoro
-          un poquito más.
+          Tal vez yo no sea el chico más romántico o tal vez detallista, trato de mejorar eso mi amor por ti. Quiero que te sientas
+          valorada y amada por mí. Quiero que a pesar de todo tu pasado tal vez te fallaron, igual a mí, no sientas que yo te haré lo mismo mi amor.
+          Quiero que confíes en mí.
         </p>
 
         <p>
-          Quiero que te diviertas, te relajes y me extrañes mucho mi amor. Te extraño muchísimo 💗
-          y quería que tengas algo bonito para este 14, porque es nuestro primer 14.
+          También quiero estar juntos para ver nuestros logros juntos, vivir muchas experiencias, viajar, salir, comer, bailar, tomar algo…
+          así sea lo que sea pero estar juntos. Sé que no te esperabas que sucediera lo de nosotros, igual que yo, pero es la cosa más bonita que me pasó.
+          Espero que sea el tuyo también amor.
         </p>
+
+        <p>
+          Tal vez este viaje al comienzo de nuestra historia es un reto fuerte, porque por lo general al comienzo de una relación es estar
+          siempre juntos y conocernos… pero a pesar de eso, no quita el hecho que yo me enamoré cada día más de ti.
+          Si superamos esto (y lo tomo por hecho) sé que estaremos juntos toda la vida.
+        </p>
+
+        <p class="letter__footer">
+          Quiero que te diviertas, te relajes y me extrañes mucho mi amor. Te extraño mucho amor, y quería que tengas algo bonito para este 14,
+          porque es nuestro primer 14. 💗
+        </p>
+
+        <div class="letter__hearts" aria-hidden="true">
+          <span>💗</span><span>💗</span><span>💗</span><span>💗</span><span>💗</span>
+        </div>
       </div>
 
       <div class="actions">
-        <a class="btn btn-primary" href="acepto.html">¿Quieres ser mi 14 de febrero? 💘</a>
-        <a class="btn btn-ghost" href="recuerdos.html">Recuerdos 💗</a>
-        <a class="btn btn-ghost" href="cupones.html">Cupones 💗</a>
-        <a class="btn btn-ghost" href="citas.html">Citas ✨</a>
-      </div>
+        <a class="btn primary" href="#" data-wa>
+          ¿Quieres ser mi 14 de febrero? 💘
+        </a>
 
-      <p class="small-note">
-        (Tip: en iPhone la música se activa con un toque. Toca el botón abajo para reproducir 🎶)
-      </p>
-    </div>
-  </div>
+        <div class="btn-row">
+          <a class="btn ghost" href="recuerdos.html">Recuerdos 💗</a>
+          <a class="btn ghost" href="citas.html">Citas ✨</a>
+          <a class="btn ghost" href="cupones.html">Cupones 🎟️</a>
+        </div>
+      </div>
+    </section>
+  </main>
 </body>
 </html>
