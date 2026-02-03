@@ -6,85 +6,86 @@
   <title>Recuerdos 💗</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body class="fade-in">
   <div class="bg"></div>
   <div class="hearts"></div>
+  <div class="heart-burst" id="heartBurst"></div>
 
-  <!-- COUNTDOWN (en todas las páginas) -->
-  <aside class="countdown-float" id="countdownFloat" aria-live="polite">
+  <!-- CONTADOR -->
+  <aside class="countdown" id="countdown" aria-live="polite">
     <div class="cd-head">
       <span class="cd-title">Faltan para volver a vernos</span>
-      <span class="cd-heart">💗</span>
+      <span class="cd-heart" aria-hidden="true">💗</span>
     </div>
     <div class="cd-grid">
-      <div class="cd-pill"><span class="cd-n" id="cdDays">--</span><span class="cd-l">DÍAS</span></div>
-      <div class="cd-pill"><span class="cd-n" id="cdHours">--</span><span class="cd-l">HRS</span></div>
-      <div class="cd-pill"><span class="cd-n" id="cdMins">--</span><span class="cd-l">MIN</span></div>
-      <div class="cd-pill"><span class="cd-n" id="cdSecs">--</span><span class="cd-l">SEG</span></div>
+      <div class="cd-cell"><span class="cd-num" id="cdDays">--</span><span class="cd-lab">DÍAS</span></div>
+      <div class="cd-cell"><span class="cd-num" id="cdHours">--</span><span class="cd-lab">HRS</span></div>
+      <div class="cd-cell"><span class="cd-num" id="cdMins">--</span><span class="cd-lab">MIN</span></div>
+      <div class="cd-cell"><span class="cd-num" id="cdSecs">--</span><span class="cd-lab">SEG</span></div>
     </div>
   </aside>
 
-  <audio id="bgm" preload="auto" loop playsinline>
+  <!-- AUDIO -->
+  <audio id="bgm" preload="metadata" loop playsinline>
     <source src="audio/uwaie.mp3" type="audio/mpeg">
   </audio>
 
   <main class="page">
     <div class="container">
-      <section class="card">
+      <section class="card hero">
         <p class="mini">Recuerdos 💗</p>
         <h1>Momentos que nunca olvidaré a tu lado</h1>
-        <p>Toca una foto para verla mejor.</p>
+        <p class="lead">Toca una foto para verla mejor.</p>
 
-        <div class="section-title">Fotos que me hicieron enamorarme más de ti 💗</div>
+        <h2 class="gallery-title">Fotos que me hicieron enamorarme más de ti 💗</h2>
         <div class="gallery">
-          <!-- JUNTOS -->
-          <img class="photo" src="fotos/A1.jpeg" alt="A1">
-          <img class="photo" src="fotos/A2.jpeg" alt="A2">
+          <!-- JUNTOS / ENAMORARME (ajusta src a tus nombres reales) -->
+          <div class="photo"><img src="fotos/A1.jpeg" alt="Foto 1" loading="lazy" decoding="async"></div>
+          <div class="photo"><img src="fotos/A2.jpeg" alt="Foto 2" loading="lazy" decoding="async"></div>
+          <div class="photo"><img src="fotos/A3.jpeg" alt="Foto 3" loading="lazy" decoding="async"></div>
+          <div class="photo"><img src="fotos/A4.jpeg" alt="Foto 4" loading="lazy" decoding="async"></div>
+          <div class="photo"><img src="fotos/A5.jpeg" alt="Foto 5" loading="lazy" decoding="async"></div>
 
-          <!-- D1-D5 -->
-          <img class="photo" src="fotos/D1.jpeg" alt="D1">
-          <img class="photo" src="fotos/D2.jpeg" alt="D2">
-          <img class="photo" src="fotos/D3.jpeg" alt="D3">
-          <img class="photo" src="fotos/D4.jpeg" alt="D4">
-          <img class="photo" src="fotos/D5.jpeg" alt="D5">
-
-          <!-- WhatsApp -->
-          <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.11.17%20AM.jpeg" alt="WhatsApp 1">
-          <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.16.44%20AM.jpeg" alt="WhatsApp 2">
-          <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.22.03%20AM.jpeg" alt="WhatsApp 3">
+          <!-- Si tienes WhatsApp Images, ponlas aquí también -->
+          <!-- Ejemplo:
+          <div class="photo"><img src="fotos/WhatsApp%20Image%202026-01-29%20at%2010.11.11%20PM.jpeg" alt="WhatsApp" loading="lazy"></div>
+          -->
         </div>
 
-        <div class="row" style="margin-top:16px">
-          <button class="btn primary" id="backCarta" type="button">Volver a la carta 💌</button>
-          <button class="btn" id="backInicio" type="button">Inicio ↩️</button>
+        <h2 class="gallery-title">Momentos que me encantan de ti ✨</h2>
+        <div class="gallery">
+          <div class="photo"><img src="fotos/D1.jpeg" alt="Momento 1" loading="lazy" decoding="async"></div>
+          <div class="photo"><img src="fotos/D2.jpeg" alt="Momento 2" loading="lazy" decoding="async"></div>
+          <div class="photo"><img src="fotos/D3.jpeg" alt="Momento 3" loading="lazy" decoding="async"></div>
+          <div class="photo"><img src="fotos/D4.jpeg" alt="Momento 4" loading="lazy" decoding="async"></div>
+          <div class="photo"><img src="fotos/D5.jpeg" alt="Momento 5" loading="lazy" decoding="async"></div>
+        </div>
+
+        <div class="btn-row">
+          <a class="btn btn-primary" href="sorpresa.html">Volver a la carta 💌</a>
+          <a class="btn btn-ghost" href="index.html">Inicio ↩</a>
         </div>
       </section>
     </div>
   </main>
 
-  <!-- Modal -->
-  <div class="modal" id="modal" aria-hidden="true">
-    <div class="modal-bg" id="modalBg"></div>
-    <button class="modal-close" id="modalClose" type="button" aria-label="Cerrar">✕</button>
-    <div class="modal-box" role="dialog" aria-modal="true" aria-label="Vista de foto">
+  <!-- MODAL -->
+  <div class="modal" id="photoModal" role="dialog" aria-modal="true" aria-label="Foto ampliada">
+    <div class="modal-box">
+      <button class="modal-close" id="modalClose" aria-label="Cerrar">×</button>
       <img class="modal-img" id="modalImg" alt="Foto ampliada">
     </div>
   </div>
 
-  <!-- Player fijo abajo-derecha -->
-  <div class="player" aria-label="Reproductor">
-    <button class="btn primary" id="playBtn" type="button">▶</button>
-    <small>UWAIE - Kapo</small>
+  <!-- PLAYER -->
+  <div class="player" id="player">
+    <button class="play" id="playBtn" aria-label="Reproducir o pausar">▶</button>
+    <div class="meta">
+      <div class="song">UWAIE - Kapo</div>
+      <div class="hint" id="playHint">Toca para reproducir</div>
+    </div>
   </div>
-
-  <script>
-    function pageGo(url){
-      document.body.classList.add('fade-out');
-      setTimeout(()=> location.href = url, 240);
-    }
-    document.getElementById('backCarta').addEventListener('click', ()=> pageGo('sorpresa.html'));
-    document.getElementById('backInicio').addEventListener('click', ()=> pageGo('index.html'));
-  </script>
 
   <script src="app.js"></script>
 </body>
