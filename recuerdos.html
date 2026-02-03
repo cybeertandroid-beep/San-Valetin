@@ -2,91 +2,67 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
   <title>Recuerdos 💗</title>
-  <link rel="stylesheet" href="styles.css" />
+
+  <meta name="countdown-to" content="2026-04-12T00:00:00-05:00">
+  <meta name="site-audio" content="audio/uwaie.mp3">
+  <meta name="wa-number" content="51TU_NUMERO_AQUI">
+
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="shared.js"></script>
 </head>
 
-<body class="fade-in">
-  <div class="bg"></div>
-  <div class="hearts"></div>
-  <div class="heart-burst" id="heartBurst"></div>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="kicker">Recuerdos 💗</div>
+      <h1>Momentos que nunca olvidaré a tu lado</h1>
+      <p class="subtitle">Toca una foto para verla mejor.</p>
 
-  <!-- CONTADOR -->
-  <aside class="countdown" id="countdown" aria-live="polite">
-    <div class="cd-head">
-      <span class="cd-title">Faltan para volver a vernos</span>
-      <span class="cd-heart" aria-hidden="true">💗</span>
-    </div>
-    <div class="cd-grid">
-      <div class="cd-cell"><span class="cd-num" id="cdDays">--</span><span class="cd-lab">DÍAS</span></div>
-      <div class="cd-cell"><span class="cd-num" id="cdHours">--</span><span class="cd-lab">HRS</span></div>
-      <div class="cd-cell"><span class="cd-num" id="cdMins">--</span><span class="cd-lab">MIN</span></div>
-      <div class="cd-cell"><span class="cd-num" id="cdSecs">--</span><span class="cd-lab">SEG</span></div>
-    </div>
-  </aside>
+      <h2 class="section-title">Fotos que me hicieron enamorarme más de ti 💗</h2>
+      <p class="section-sub">Mis favoritas… porque me derriten 💗</p>
 
-  <!-- AUDIO -->
-  <audio id="bgm" preload="metadata" loop playsinline>
-    <source src="audio/uwaie.mp3" type="audio/mpeg">
-  </audio>
-
-  <main class="page">
-    <div class="container">
-      <section class="card hero">
-        <p class="mini">Recuerdos 💗</p>
-        <h1>Momentos que nunca olvidaré a tu lado</h1>
-        <p class="lead">Toca una foto para verla mejor.</p>
-
-        <h2 class="gallery-title">Fotos que me hicieron enamorarme más de ti 💗</h2>
-        <div class="gallery">
-          <!-- JUNTOS / ENAMORARME (ajusta src a tus nombres reales) -->
-          <div class="photo"><img src="fotos/A1.jpeg" alt="Foto 1" loading="lazy" decoding="async"></div>
-          <div class="photo"><img src="fotos/A2.jpeg" alt="Foto 2" loading="lazy" decoding="async"></div>
-          <div class="photo"><img src="fotos/A3.jpeg" alt="Foto 3" loading="lazy" decoding="async"></div>
-          <div class="photo"><img src="fotos/A4.jpeg" alt="Foto 4" loading="lazy" decoding="async"></div>
-          <div class="photo"><img src="fotos/A5.jpeg" alt="Foto 5" loading="lazy" decoding="async"></div>
-
-          <!-- Si tienes WhatsApp Images, ponlas aquí también -->
-          <!-- Ejemplo:
-          <div class="photo"><img src="fotos/WhatsApp%20Image%202026-01-29%20at%2010.11.11%20PM.jpeg" alt="WhatsApp" loading="lazy"></div>
-          -->
-        </div>
-
-        <h2 class="gallery-title">Momentos que me encantan de ti ✨</h2>
-        <div class="gallery">
-          <div class="photo"><img src="fotos/D1.jpeg" alt="Momento 1" loading="lazy" decoding="async"></div>
-          <div class="photo"><img src="fotos/D2.jpeg" alt="Momento 2" loading="lazy" decoding="async"></div>
-          <div class="photo"><img src="fotos/D3.jpeg" alt="Momento 3" loading="lazy" decoding="async"></div>
-          <div class="photo"><img src="fotos/D4.jpeg" alt="Momento 4" loading="lazy" decoding="async"></div>
-          <div class="photo"><img src="fotos/D5.jpeg" alt="Momento 5" loading="lazy" decoding="async"></div>
-        </div>
-
-        <div class="btn-row">
-          <a class="btn btn-primary" href="sorpresa.html">Volver a la carta 💌</a>
-          <a class="btn btn-ghost" href="index.html">Inicio ↩</a>
-        </div>
+      <section class="gallery">
+        <img src="img/juntos1.jpg" alt="Foto 1">
+        <img src="img/juntos2.jpg" alt="Foto 2">
+        <img src="img/juntos3.jpg" alt="Foto 3">
+        <img src="img/juntos4.jpg" alt="Foto 4">
+        <img src="img/juntos5.jpg" alt="Foto 5">
       </section>
-    </div>
-  </main>
 
-  <!-- MODAL -->
-  <div class="modal" id="photoModal" role="dialog" aria-modal="true" aria-label="Foto ampliada">
-    <div class="modal-box">
-      <button class="modal-close" id="modalClose" aria-label="Cerrar">×</button>
-      <img class="modal-img" id="modalImg" alt="Foto ampliada">
+      <hr class="hr">
+
+      <h2 class="section-title">Momentos que me encantan de ti ✨</h2>
+      <p class="section-sub">Cosas tuyas que amo y no cambio por nada ✨</p>
+
+      <section class="gallery">
+        <img src="img/moment1.jpg" alt="Momento 1">
+        <img src="img/moment2.jpg" alt="Momento 2">
+        <img src="img/moment3.jpg" alt="Momento 3">
+        <img src="img/moment4.jpg" alt="Momento 4">
+        <img src="img/moment5.jpg" alt="Momento 5">
+      </section>
+
+      <hr class="hr">
+
+      <h2 class="section-title">Más momentos (WhatsApp) 💬</h2>
+      <p class="section-sub">Capturas, mensajitos, y cositas que me hacen sonreír 💬</p>
+
+      <section class="gallery">
+        <img src="img/ws1.jpg" alt="WhatsApp 1">
+        <img src="img/ws2.jpg" alt="WhatsApp 2">
+        <img src="img/ws3.jpg" alt="WhatsApp 3">
+      </section>
+
+      <div class="actions" style="margin-top:22px;">
+        <a class="btn btn-ghost" href="index.html">Inicio ↩</a>
+        <a class="btn btn-primary" href="cupones.html">Cupones 💗</a>
+        <a class="btn btn-ghost" href="citas.html">Citas ✨</a>
+      </div>
     </div>
   </div>
-
-  <!-- PLAYER -->
-  <div class="player" id="player">
-    <button class="play" id="playBtn" aria-label="Reproducir o pausar">▶</button>
-    <div class="meta">
-      <div class="song">UWAIE - Kapo</div>
-      <div class="hint" id="playHint">Toca para reproducir</div>
-    </div>
-  </div>
-
-  <script src="app.js"></script>
 </body>
 </html>
