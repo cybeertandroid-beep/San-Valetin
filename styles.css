@@ -1,172 +1,574 @@
-(() => {
-  const meta = (name, fallback="") =>
-    document.querySelector(`meta[name="${name}"]`)?.content?.trim() || fallback;
+:root{
+  --bg1: #ffe7ee;
+  --bg2: #fff6f8;
+  --card: rgba(255,255,255,0.78);
+  --card2: rgba(255,255,255,0.62);
+  --stroke: rgba(255, 105, 160, 0.20);
+  --text: #2c2430;
+  --muted: rgba(44,36,48,0.70);
+  --pink: #ff5fa2;
+  --pink2:#ff7bb5;
 
-  const COUNTDOWN_TO = meta("countdown-to", "2026-04-12T00:00:00-05:00");
-  const AUDIO_SRC = meta("site-audio", "audio/uwaie.mp3");
-  const WA_NUMBER = meta("wa-number", "51999999999"); // cambia aquí o en <meta>
+  --radius-xl: 28px;
+  --radius-lg: 22px;
+  --radius-md: 16px;
+  --shadow: 0 18px 50px rgba(0,0,0,0.10);
 
-  // =========================
-  // TOPBAR (contador) en TODAS
-  // =========================
-  const topbar = document.createElement("div");
-  topbar.id = "topbar";
-  topbar.innerHTML = `
-    <div class="countdown" role="status" aria-label="Cuenta regresiva">
-      <div class="countdown__title">
-        <span>Faltan para volver a vernos</span>
-        <span class="heart">💗</span>
-      </div>
-      <div class="countdown__grid">
-        <div class="cd-box"><strong id="cd-d">--</strong><small>DÍAS</small></div>
-        <div class="cd-box"><strong id="cd-h">--</strong><small>HRS</small></div>
-        <div class="cd-box"><strong id="cd-m">--</strong><small>MIN</small></div>
-        <div class="cd-box"><strong id="cd-s">--</strong><small>SEG</small></div>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(topbar);
+  --ui-top: 110px;   /* JS lo recalcula */
+  --ui-bottom: 90px; /* JS lo recalcula */
 
-  const setTopSpace = () => {
-    const h = topbar.getBoundingClientRect().height;
-    document.documentElement.style.setProperty("--topbar-space", `${h + 12}px`);
-  };
-  window.addEventListener("resize", setTopSpace);
-  setTopSpace();
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
 
-  // Countdown logic
-  const elD = topbar.querySelector("#cd-d");
-  const elH = topbar.querySelector("#cd-h");
-  const elM = topbar.querySelector("#cd-m");
-  const elS = topbar.querySelector("#cd-s");
+*{ box-sizing: border-box; }
+html,body{ height: 100%; }
+body{
+  margin:0;
+  font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--text);
+  overflow-x:hidden;
+}
 
-  const target = new Date(COUNTDOWN_TO);
-  const pad2 = (n) => String(Math.max(0, n)).padStart(2, "0");
+/* Fondo uniforme SIEMPRE */
+.bg{
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(1200px 800px at 20% 10%, rgba(255, 95, 162, 0.18), transparent 60%),
+    radial-gradient(900px 600px at 90% 30%, rgba(255, 123, 181, 0.16), transparent 55%),
+    linear-gradient(180deg, var(--bg1), var(--bg2));
+}
 
-  function tick(){
-    const now = new Date();
-    let diff = target.getTime() - now.getTime();
-    if (diff < 0) diff = 0;
+.page{
+  padding-top: calc(var(--ui-top) + 18px);
+  padding-bottom: calc(var(--ui-bottom) + 18px);
+  width: min(980px, calc(100% - 24px));
+  margin: 0 auto;
+}
 
-    const totalSeconds = Math.floor(diff / 1000);
-    const days = Math.floor(totalSeconds / 86400);
-    const hours = Math.floor((totalSeconds % 86400) / 3600);
-    const mins = Math.floor((totalSeconds % 3600) / 60);
-    const secs = totalSeconds % 60;
+.card{
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,0.65);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
 
-    elD.textContent = days;
-    elH.textContent = pad2(hours);
-    elM.textContent = pad2(mins);
-    elS.textContent = pad2(secs);
+.hero{
+  padding: clamp(18px, 3vw, 28px);
+}
+
+.kicker{
+  margin: 4px 0 10px;
+  text-align:center;
+  font-weight:600;
+  color: var(--muted);
+}
+
+.title{
+  margin: 0;
+  text-align:center;
+  font-size: clamp(30px, 4vw, 56px);
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.subtitle{
+  margin: 12px auto 0;
+  text-align:center;
+  max-width: 54ch;
+  color: var(--muted);
+  font-size: clamp(14px, 1.8vw, 18px);
+}
+
+.letter{
+  margin-top: 18px;
+  padding: 18px 18px 20px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 195, 214, 0.18);
+  border: 1px dashed rgba(255, 95, 162, 0.30);
+  position: relative;
+  overflow: hidden;
+}
+
+.letter::before{
+  content:"";
+  position:absolute;
+  inset:-40px;
+  background:
+    radial-gradient(240px 160px at 20% 20%, rgba(255,95,162,0.16), transparent 70%),
+    radial-gradient(260px 180px at 80% 40%, rgba(255,123,181,0.14), transparent 70%);
+  pointer-events:none;
+}
+
+.letter__head{
+  position: relative;
+  display:flex;
+  align-items:flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.letter h2{
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.letter__hint{
+  margin: 0;
+  color: rgba(255,95,162,0.75);
+  font-weight: 700;
+}
+
+.letter p{
+  position: relative;
+  margin: 14px 0 0;
+  color: rgba(44,36,48,0.78);
+  line-height: 1.75;
+}
+
+.letter__footer{
+  font-weight: 600;
+}
+
+.letter__hearts{
+  position:absolute;
+  right: 14px;
+  bottom: 10px;
+  display:flex;
+  gap: 6px;
+  opacity: 0.65;
+  pointer-events:none;
+}
+
+.actions{
+  margin-top: 18px;
+  display:flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items:center;
+}
+
+/* Botones */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  text-decoration:none;
+  border: 1px solid rgba(0,0,0,0.06);
+  font-weight: 800;
+  cursor:pointer;
+  user-select:none;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+  background: rgba(255,255,255,0.72);
+  color: var(--text);
+}
+.btn:hover{ transform: translateY(-1px); box-shadow: 0 12px 30px rgba(0,0,0,0.10); }
+.btn:active{ transform: translateY(0px) scale(0.99); }
+
+.btn.primary{
+  background: linear-gradient(180deg, var(--pink2), var(--pink));
+  color: white;
+  border: 1px solid rgba(255, 95, 162, 0.32);
+  box-shadow: 0 18px 45px rgba(255, 95, 162, 0.22);
+  width: min(520px, 100%);
+}
+.btn.ghost{
+  width: auto;
+}
+
+.btn-row{
+  display:flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content:center;
+}
+
+/* Secciones Recuerdos */
+.block{
+  margin-top: 18px;
+}
+.section-title{
+  text-align:center;
+  margin: 18px 0 12px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+@media (max-width: 860px){
+  .grid{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 430px){
+  .grid{ grid-template-columns: 1fr; }
+}
+
+.photo{
+  position: relative;
+  border-radius: 18px;
+  overflow:hidden;
+  border: 1px solid rgba(0,0,0,0.06);
+  background: rgba(255,255,255,0.55);
+  box-shadow: 0 14px 35px rgba(0,0,0,0.10);
+  cursor: pointer;
+  padding:0;
+}
+.photo img{
+  width:100%;
+  height: 220px;
+  object-fit: cover;
+  display:block;
+}
+@media (max-width: 430px){
+  .photo img{ height: 260px; }
+}
+
+/* Paneles (citas/cupones) */
+.panel{
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  background: rgba(255,255,255,0.62);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.panel-title{
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.muted{ color: var(--muted); margin: 0 0 10px; }
+
+.random-box{
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px dashed rgba(255,95,162,0.30);
+  background: rgba(255, 195, 214, 0.16);
+}
+
+.random-label{
+  margin: 0;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.random-result{
+  margin: 10px 0 14px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* Checklist */
+.checklist{
+  display:grid;
+  gap: 10px;
+}
+.check{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.62);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+.check input{ transform: scale(1.15); }
+.check span{ font-weight: 700; }
+
+/* Cupones */
+.coupon-grid{
+  margin-top: 14px;
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+@media (max-width: 700px){
+  .coupon-grid{ grid-template-columns: 1fr; }
+}
+
+.coupon{
+  padding: 14px;
+  border-radius: 22px;
+  background: rgba(255,255,255,0.62);
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+  cursor:pointer;
+  position: relative;
+  overflow:hidden;
+}
+.coupon::before{
+  content:"";
+  position:absolute;
+  inset:-40px;
+  background: radial-gradient(240px 180px at 20% 30%, rgba(255,95,162,0.14), transparent 65%);
+  pointer-events:none;
+}
+.coupon h3{
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 900;
+  position: relative;
+}
+.coupon p{
+  margin: 0;
+  color: var(--muted);
+  position: relative;
+}
+.coupon .tag{
+  position:absolute;
+  right: 12px;
+  top: 12px;
+  font-weight: 900;
+  color: rgba(44,36,48,0.55);
+}
+.coupon.used{
+  opacity: 0.72;
+}
+.coupon.used .tag{
+  color: rgba(0,0,0,0.55);
+}
+
+/* Lista bonita */
+.nice-list{ margin: 10px 0 0; color: var(--muted); }
+.nice-list li{ margin: 8px 0; }
+
+/* Modal cupones */
+.modal{
+  position: fixed;
+  inset: 0;
+  display:none;
+  z-index: 9999;
+}
+.modal.open{ display:block; }
+.modal__backdrop{
+  position:absolute; inset:0;
+  background: rgba(0,0,0,0.55);
+}
+.modal__panel{
+  position:absolute;
+  left: 50%;
+  top: calc(var(--safe-top) + 18px);
+  transform: translateX(-50%);
+  width: min(520px, calc(100% - 24px));
+  background: rgba(255,255,255,0.92);
+  border-radius: 22px;
+  padding: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.22);
+}
+.modal__close{
+  position:absolute;
+  right: 10px;
+  top: 10px;
+  width: 44px; height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: rgba(255,255,255,0.85);
+  cursor:pointer;
+  font-size: 18px;
+  font-weight: 900;
+}
+.modal__title{
+  margin: 6px 0 6px;
+  font-weight: 900;
+}
+.modal__desc{
+  margin: 0 0 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* Lightbox fotos (X siempre visible) */
+.lightbox{
+  position: fixed;
+  inset: 0;
+  display:none;
+  z-index: 10000;
+}
+.lightbox.open{ display:block; }
+.lightbox__backdrop{
+  position:absolute;
+  inset:0;
+  background: rgba(0,0,0,0.70);
+}
+.lightbox__panel{
+  position:absolute;
+  left: 50%;
+  top: calc(var(--safe-top) + 14px);
+  transform: translateX(-50%);
+  width: min(980px, calc(100% - 24px));
+  height: calc(100vh - var(--safe-top) - var(--safe-bottom) - 28px);
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: 22px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 16px;
+}
+.lightbox__img{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 18px;
+  background: rgba(0,0,0,0.10);
+}
+.lightbox__close{
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.20);
+  color: white;
+  cursor:pointer;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+/* ===== UI GLOBAL ===== */
+#floating-ui{
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9000;
+}
+
+/* Contador */
+.floating-counter{
+  pointer-events: auto;
+  position: fixed;
+  top: calc(var(--safe-top) + 10px);
+  left: 12px;
+  width: min(520px, calc(100% - 24px));
+  border-radius: 22px;
+  padding: 12px;
+  background: rgba(255,255,255,0.80);
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 14px 35px rgba(0,0,0,0.10);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+@media (max-width: 520px){
+  .floating-counter{
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 24px);
   }
-  tick();
-  setInterval(tick, 1000);
+}
 
-  // =========================
-  // AUDIO: iPhone requiere toque (sin autoplay)
-  // =========================
-  let audio = document.getElementById("bgm");
-  if (!audio){
-    audio = document.createElement("audio");
-    audio.id = "bgm";
-    audio.loop = true;
-    audio.preload = "auto";
-    audio.setAttribute("playsinline", "");
-    document.body.appendChild(audio);
+.counter-title{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  font-weight: 900;
+  color: rgba(44,36,48,0.80);
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+.counter-title .heart{ color: var(--pink); }
+
+.counter-grid{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.counter-box{
+  border-radius: 16px;
+  background: rgba(255,255,255,0.72);
+  border: 1px solid rgba(0,0,0,0.06);
+  padding: 10px 8px;
+  text-align:center;
+}
+.counter-box .num{
+  display:block;
+  font-weight: 900;
+  font-size: 22px;
+  color: var(--pink);
+  line-height: 1.05;
+}
+.counter-box .lab{
+  display:block;
+  margin-top: 2px;
+  font-size: 11px;
+  font-weight: 800;
+  color: rgba(44,36,48,0.65);
+}
+
+/* Player */
+.floating-player{
+  pointer-events: auto;
+  position: fixed;
+  right: 12px;
+  bottom: calc(var(--safe-bottom) + 12px);
+  width: min(260px, calc(100% - 24px));
+  border-radius: 999px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.82);
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 14px 35px rgba(0,0,0,0.10);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display:flex;
+  align-items:center;
+  gap: 10px;
+}
+@media (max-width: 520px){
+  .floating-player{
+    right: 50%;
+    transform: translateX(50%);
+    width: calc(100% - 24px);
+    justify-content: center;
   }
-  audio.src = AUDIO_SRC;
+}
 
-  // Player abajo (mini)
-  const dock = document.createElement("div");
-  dock.id = "playerDock";
-  dock.innerHTML = `
-    <div class="player-pill">
-      <button class="player-btn" id="plBtn" aria-label="Reproducir/Pausar">▶</button>
-      <div class="player-text">Toca para reproducir</div>
-    </div>
-  `;
-  document.body.appendChild(dock);
+.player-btn{
+  width: 44px;
+  height: 44px;
+  border-radius: 18px;
+  border: none;
+  cursor:pointer;
+  background: linear-gradient(180deg, var(--pink2), var(--pink));
+  box-shadow: 0 14px 30px rgba(255,95,162,0.20);
+  color: white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight: 900;
+  font-size: 16px;
+}
+.player-label{
+  display:flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+.player-label .t1{
+  font-weight: 900;
+}
+.player-label .t2{
+  color: rgba(44,36,48,0.65);
+  font-size: 12px;
+  font-weight: 700;
+}
 
-  const plBtn = dock.querySelector("#plBtn");
-
-  function ui(){
-    plBtn.textContent = audio.paused ? "▶" : "⏸";
-  }
-  ui();
-
-  async function tryPlay(){
-    audio.muted = false;
-    try{ await audio.play(); }catch(e){ /* iOS: solo con gesto */ }
-    ui();
-  }
-
-  plBtn.addEventListener("click", async (e) => {
-    e.preventDefault();
-    if (audio.paused) await tryPlay();
-    else audio.pause();
-    ui();
-  });
-
-  // Primer toque en la página también puede iniciar audio
-  const firstGesture = async () => {
-    if (audio.paused) await tryPlay();
-    document.removeEventListener("touchstart", firstGesture);
-    document.removeEventListener("pointerdown", firstGesture);
-  };
-  document.addEventListener("touchstart", firstGesture, { passive:true, once:true });
-  document.addEventListener("pointerdown", firstGesture, { passive:true, once:true });
-
-  audio.addEventListener("play", ui);
-  audio.addEventListener("pause", ui);
-
-  // =========================
-  // WhatsApp sin mensaje automático
-  // =========================
-  document.querySelectorAll("[data-wa]").forEach(a => {
-    a.setAttribute("href", `https://wa.me/${WA_NUMBER}`);
-    a.setAttribute("target", "_blank");
-    a.setAttribute("rel", "noopener");
-  });
-
-  // =========================
-  // Lightbox pro para .gallery img
-  // =========================
-  let lb = document.getElementById("lightbox");
-  if (!lb){
-    lb = document.createElement("div");
-    lb.id = "lightbox";
-    lb.innerHTML = `
-      <button class="lb-close" type="button" aria-label="Cerrar">×</button>
-      <div class="lb-inner">
-        <img class="lb-img" alt="Foto ampliada" />
-      </div>
-    `;
-    document.body.appendChild(lb);
-  }
-
-  const lbImg = lb.querySelector(".lb-img");
-  const lbClose = lb.querySelector(".lb-close");
-
-  function openLB(src){
-    document.body.classList.add("modal-open");
-    lb.classList.add("open");
-    lbImg.src = src;
-  }
-  function closeLB(){
-    lb.classList.remove("open");
-    document.body.classList.remove("modal-open");
-    lbImg.src = "";
-  }
-
-  lbClose.addEventListener("click", closeLB);
-  lb.addEventListener("click", (e) => { if (e.target === lb) closeLB(); });
-
-  document.querySelectorAll(".gallery img").forEach(img => {
-    img.style.cursor = "zoom-in";
-    img.addEventListener("click", () => {
-      const src = img.getAttribute("data-full") || img.currentSrc || img.src;
-      openLB(src);
-    });
-  });
-
-})();
+/* Bloqueo de scroll al abrir modales */
+body.is-locked{
+  position: fixed;
+  width: 100%;
+}
