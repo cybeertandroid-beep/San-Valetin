@@ -10,7 +10,21 @@
   <div class="bg"></div>
   <div class="hearts"></div>
 
-  <audio id="bgm" preload="auto" loop>
+  <!-- COUNTDOWN (en todas las páginas) -->
+  <aside class="countdown-float" id="countdownFloat" aria-live="polite">
+    <div class="cd-head">
+      <span class="cd-title">Faltan para volver a vernos</span>
+      <span class="cd-heart">💗</span>
+    </div>
+    <div class="cd-grid">
+      <div class="cd-pill"><span class="cd-n" id="cdDays">--</span><span class="cd-l">DÍAS</span></div>
+      <div class="cd-pill"><span class="cd-n" id="cdHours">--</span><span class="cd-l">HRS</span></div>
+      <div class="cd-pill"><span class="cd-n" id="cdMins">--</span><span class="cd-l">MIN</span></div>
+      <div class="cd-pill"><span class="cd-n" id="cdSecs">--</span><span class="cd-l">SEG</span></div>
+    </div>
+  </aside>
+
+  <audio id="bgm" preload="auto" loop playsinline>
     <source src="audio/uwaie.mp3" type="audio/mpeg">
   </audio>
 
@@ -22,7 +36,7 @@
         <p class="lead">te hice algo especial. Espero te guste. <b>Hecho con amor</b> 💗</p>
 
         <div class="row" style="margin-top:14px">
-          <button class="btn primary pulse" id="btnStart" type="button">Ver sorpresa ✨</button>
+          <button class="btn primary pulse" id="btnStart">Ver sorpresa ✨</button>
         </div>
 
         <p class="hint">Mi amor, ábrelo con calma y con audífonos 😌</p>
@@ -37,11 +51,8 @@
   </div>
 
   <script>
-    // Ir a sorpresa con transición (y guardar estado de música)
-    document.getElementById('btnStart').addEventListener('click', async ()=>{
-      if (window.__startBgm) { try { await window.__startBgm(true); } catch(e){} }
-      if (window.__saveBgmState) { try { window.__saveBgmState(); } catch(e){} }
-
+    // Ir a sorpresa con transición
+    document.getElementById('btnStart').addEventListener('click', ()=>{
       document.body.classList.add('fade-out');
       setTimeout(()=> location.href = 'sorpresa.html', 240);
     });
