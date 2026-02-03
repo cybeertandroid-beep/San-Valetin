@@ -10,7 +10,21 @@
   <div class="bg"></div>
   <div class="hearts"></div>
 
-  <audio id="bgm" preload="auto" loop>
+  <!-- COUNTDOWN (en todas las páginas) -->
+  <aside class="countdown-float" id="countdownFloat" aria-live="polite">
+    <div class="cd-head">
+      <span class="cd-title">Faltan para volver a vernos</span>
+      <span class="cd-heart">💗</span>
+    </div>
+    <div class="cd-grid">
+      <div class="cd-pill"><span class="cd-n" id="cdDays">--</span><span class="cd-l">DÍAS</span></div>
+      <div class="cd-pill"><span class="cd-n" id="cdHours">--</span><span class="cd-l">HRS</span></div>
+      <div class="cd-pill"><span class="cd-n" id="cdMins">--</span><span class="cd-l">MIN</span></div>
+      <div class="cd-pill"><span class="cd-n" id="cdSecs">--</span><span class="cd-l">SEG</span></div>
+    </div>
+  </aside>
+
+  <audio id="bgm" preload="auto" loop playsinline>
     <source src="audio/uwaie.mp3" type="audio/mpeg">
   </audio>
 
@@ -23,23 +37,21 @@
 
         <div class="section-title">Fotos que me hicieron enamorarme más de ti 💗</div>
         <div class="gallery">
-          <!-- A1, A2 -->
+          <!-- JUNTOS -->
           <img class="photo" src="fotos/A1.jpeg" alt="A1">
           <img class="photo" src="fotos/A2.jpeg" alt="A2">
 
-          <!-- WhatsApp (van aquí también) -->
-          <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.11.17%20AM.jpeg" alt="WhatsApp 1">
-          <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.16.44%20AM.jpeg" alt="WhatsApp 2">
-          <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.22.03%20AM.jpeg" alt="WhatsApp 3">
-        </div>
-
-        <div class="section-title">Momentos que me encantan de ti ✨</div>
-        <div class="gallery">
+          <!-- D1-D5 -->
           <img class="photo" src="fotos/D1.jpeg" alt="D1">
           <img class="photo" src="fotos/D2.jpeg" alt="D2">
           <img class="photo" src="fotos/D3.jpeg" alt="D3">
           <img class="photo" src="fotos/D4.jpeg" alt="D4">
           <img class="photo" src="fotos/D5.jpeg" alt="D5">
+
+          <!-- WhatsApp -->
+          <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.11.17%20AM.jpeg" alt="WhatsApp 1">
+          <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.16.44%20AM.jpeg" alt="WhatsApp 2">
+          <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.22.03%20AM.jpeg" alt="WhatsApp 3">
         </div>
 
         <div class="row" style="margin-top:16px">
@@ -67,7 +79,6 @@
 
   <script>
     function pageGo(url){
-      if (window.__saveBgmState) { try { window.__saveBgmState(); } catch(e){} }
       document.body.classList.add('fade-out');
       setTimeout(()=> location.href = url, 240);
     }
