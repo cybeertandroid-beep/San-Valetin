@@ -10,10 +10,20 @@
   <div class="bg"></div>
   <div class="hearts"></div>
 
-  <audio id="bgm" preload="auto" loop>
-    <!-- 1) Si el MP3 está en la raíz -->
+  <!-- COUNTDOWN (VISIBLE SIEMPRE) -->
+  <aside class="countdown-float" aria-live="polite">
+    <div class="cd-title">Faltan para volver a vernos 💗</div>
+    <div class="cd-grid">
+      <div class="cd-chip"><span class="cd-num" id="cdDays">--</span><span class="cd-lab">DÍAS</span></div>
+      <div class="cd-chip"><span class="cd-num" id="cdHours">--</span><span class="cd-lab">HRS</span></div>
+      <div class="cd-chip"><span class="cd-num" id="cdMins">--</span><span class="cd-lab">MIN</span></div>
+      <div class="cd-chip"><span class="cd-num" id="cdSecs">--</span><span class="cd-lab">SEG</span></div>
+    </div>
+  </aside>
+
+  <audio id="bgm" preload="metadata" loop>
+    <!-- NO renombres: dejo ambas rutas (raíz y /audio) -->
     <source src="UWAIE%20-%20Kapo%20(Video%20Oficial).mp3" type="audio/mpeg">
-    <!-- 2) Si el MP3 está en /audio -->
     <source src="audio/UWAIE%20-%20Kapo%20(Video%20Oficial).mp3" type="audio/mpeg">
   </audio>
 
@@ -40,12 +50,13 @@
   </div>
 
   <script>
-    // Ir a sorpresa con transición
     document.getElementById('btnStart').addEventListener('click', ()=>{
       document.body.classList.add('fade-out');
       setTimeout(()=> location.href = 'sorpresa.html', 240);
     });
   </script>
+
+  <script src="countdown.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
