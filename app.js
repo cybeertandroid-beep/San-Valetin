@@ -21,10 +21,10 @@
     const t = parseFloat(localStorage.getItem('bgm_time') || '0');
     const p = localStorage.getItem('bgm_playing') || '0';
 
-    // Set time (may fail until metadata loaded; retry on loadedmetadata)
     const setTime = () => {
       try { audio.currentTime = isFinite(t) ? t : 0; } catch(e) {}
     };
+
     if (audio.readyState >= 1) setTime();
     else audio.addEventListener('loadedmetadata', setTime, { once:true });
 
@@ -33,7 +33,7 @@
         await audio.play();
         setBtn(true);
       } catch (e) {
-        // Autoplay blocked: user must tap play
+        // Autoplay bloqueado: el usuario debe tocar play
         setBtn(false);
       }
     } else {
@@ -59,7 +59,7 @@
   }
 
   // ==========================
-  //  MODAL: open/close, ESC, scroll lock
+  //  MODAL: open/close, ESC, scroll lock (solo en Recuerdos)
   // ==========================
   const modal = document.getElementById('modal');
   const modalImg = document.getElementById('modalImg');
@@ -73,9 +73,8 @@
   }
 
   function openModal(src){
-    if (!modal || !modalImg) return;
-    // Asegura encode por si viene con espacios (fallback)
-    const safeSrc = encodeURI(src);
+    if (!modal || !modalImg || !src) return;
+    const safeSrc = encodeURI(src); // por si viene con espacios
     modalImg.src = safeSrc;
     modal.classList.add('open');
     modal.setAttribute('aria-hidden','false');
@@ -102,39 +101,4 @@
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeModal();
   });
-
-  // ==========================
-  //  COUNTDOWN: only if elements exist (Recuerdos)
-  // ==========================
-  const cdDays = document.getElementById('cdDays');
-  const cdHours = document.getElementById('cdHours');
-  const cdMins = document.getElementById('cdMins');
-  const cdSecs = document.getElementById('cdSecs');
-
-  if (cdDays && cdHours && cdMins && cdSecs) {
-    // 11 Abril 2026 00:00:00 hora local (ajústalo si quieres otra hora)
-    const target = new Date(2026, 3, 11, 0, 0, 0).getTime();
-
-    const pad2 = (n) => String(n).padStart(2,'0');
-
-    function tick(){
-      const now = Date.now();
-      let diff = target - now;
-
-      if (diff < 0) diff = 0;
-
-      const d = Math.floor(diff / (1000*60*60*24));
-      const h = Math.floor((diff / (1000*60*60)) % 24);
-      const m = Math.floor((diff / (1000*60)) % 60);
-      const s = Math.floor((diff / 1000) % 60);
-
-      cdDays.textContent = d;
-      cdHours.textContent = pad2(h);
-      cdMins.textContent = pad2(m);
-      cdSecs.textContent = pad2(s);
-    }
-
-    tick();
-    setInterval(tick, 1000);
-  }
 })();
