@@ -1,172 +1,230 @@
-(() => {
-  const meta = (name, fallback="") =>
-    document.querySelector(`meta[name="${name}"]`)?.content?.trim() || fallback;
+/* ===============================
+   shared.js (FULL)
+   - Countdown en todas las páginas
+   - Player: “Toca para reproducir” (sin nombre), abajo, minimizable
+   - iOS: reproduce SOLO tras toque (política)
+   - Galería: modal pro con X siempre accesible
+   - WhatsApp: abre chat sin mensaje
+   =============================== */
 
-  const COUNTDOWN_TO = meta("countdown-to", "2026-04-12T00:00:00-05:00");
-  const AUDIO_SRC = meta("site-audio", "audio/uwaie.mp3");
-  const WA_NUMBER = meta("wa-number", "51999999999"); // cambia aquí o en <meta>
+(function () {
+  const WA_NUMBER = "51990367042"; // 51 + tu número
 
-  // =========================
-  // TOPBAR (contador) en TODAS
-  // =========================
-  const topbar = document.createElement("div");
-  topbar.id = "topbar";
-  topbar.innerHTML = `
-    <div class="countdown" role="status" aria-label="Cuenta regresiva">
-      <div class="countdown__title">
-        <span>Faltan para volver a vernos</span>
-        <span class="heart">💗</span>
-      </div>
-      <div class="countdown__grid">
-        <div class="cd-box"><strong id="cd-d">--</strong><small>DÍAS</small></div>
-        <div class="cd-box"><strong id="cd-h">--</strong><small>HRS</small></div>
-        <div class="cd-box"><strong id="cd-m">--</strong><small>MIN</small></div>
-        <div class="cd-box"><strong id="cd-s">--</strong><small>SEG</small></div>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(topbar);
+  // -----------------------------
+  // Helpers
+  // -----------------------------
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
-  const setTopSpace = () => {
-    const h = topbar.getBoundingClientRect().height;
-    document.documentElement.style.setProperty("--topbar-space", `${h + 12}px`);
-  };
-  window.addEventListener("resize", setTopSpace);
-  setTopSpace();
+  function pad2(n) { return String(n).padStart(2, "0"); }
 
-  // Countdown logic
-  const elD = topbar.querySelector("#cd-d");
-  const elH = topbar.querySelector("#cd-h");
-  const elM = topbar.querySelector("#cd-m");
-  const elS = topbar.querySelector("#cd-s");
+  // -----------------------------
+  // WhatsApp links (sin mensaje)
+  // -----------------------------
+  $$('[data-wa="open"]').forEach(a => {
+    a.href = `https://wa.me/${WA_NUMBER}`;
+    a.target = "_blank";
+    a.rel = "noopener";
+  });
 
-  const target = new Date(COUNTDOWN_TO);
-  const pad2 = (n) => String(Math.max(0, n)).padStart(2, "0");
+  // -----------------------------
+  // Countdown
+  // -----------------------------
+  const cd = $("#countdown");
+  if (cd) {
+    const targetStr = cd.getAttribute("data-target") || "2026-04-12T00:00:00-05:00";
+    const target = new Date(targetStr);
 
-  function tick(){
-    const now = new Date();
-    let diff = target.getTime() - now.getTime();
-    if (diff < 0) diff = 0;
+    const elD = $("#cd_days");
+    const elH = $("#cd_hrs");
+    const elM = $("#cd_min");
+    const elS = $("#cd_sec");
 
-    const totalSeconds = Math.floor(diff / 1000);
-    const days = Math.floor(totalSeconds / 86400);
-    const hours = Math.floor((totalSeconds % 86400) / 3600);
-    const mins = Math.floor((totalSeconds % 3600) / 60);
-    const secs = totalSeconds % 60;
+    function tick() {
+      const now = new Date();
+      let diff = target.getTime() - now.getTime();
+      if (diff < 0) diff = 0;
 
-    elD.textContent = days;
-    elH.textContent = pad2(hours);
-    elM.textContent = pad2(mins);
-    elS.textContent = pad2(secs);
+      const sec = Math.floor(diff / 1000);
+      const days = Math.floor(sec / 86400);
+      const hrs = Math.floor((sec % 86400) / 3600);
+      const min = Math.floor((sec % 3600) / 60);
+      const s = sec % 60;
+
+      if (elD) elD.textContent = String(days);
+      if (elH) elH.textContent = pad2(hrs);
+      if (elM) elM.textContent = pad2(min);
+      if (elS) elS.textContent = pad2(s);
+    }
+
+    tick();
+    setInterval(tick, 1000);
   }
-  tick();
-  setInterval(tick, 1000);
 
-  // =========================
-  // AUDIO: iPhone requiere toque (sin autoplay)
-  // =========================
-  let audio = document.getElementById("bgm");
-  if (!audio){
-    audio = document.createElement("audio");
-    audio.id = "bgm";
+  // -----------------------------
+  // Audio Player (no autoplay, solo tras toque)
+  // -----------------------------
+  const audio = $("#bgm");
+  const player = $("#player");
+  const btn = $("#playerBtn");
+  const mini = $("#playerMini");
+
+  function setPlayingUI(isPlaying) {
+    if (!btn) return;
+    btn.innerHTML = "";
+    const icon = document.createElement("span");
+    icon.className = `icon ${isPlaying ? "pause" : "play"}`;
+    btn.appendChild(icon);
+    btn.setAttribute("aria-pressed", isPlaying ? "true" : "false");
+  }
+
+  async function tryPlay(userAction = false) {
+    if (!audio) return false;
     audio.loop = true;
-    audio.preload = "auto";
-    audio.setAttribute("playsinline", "");
-    document.body.appendChild(audio);
-  }
-  audio.src = AUDIO_SRC;
+    audio.setAttribute("playsinline", "true");
 
-  // Player abajo (mini)
-  const dock = document.createElement("div");
-  dock.id = "playerDock";
-  dock.innerHTML = `
-    <div class="player-pill">
-      <button class="player-btn" id="plBtn" aria-label="Reproducir/Pausar">▶</button>
-      <div class="player-text">Toca para reproducir</div>
-    </div>
-  `;
-  document.body.appendChild(dock);
-
-  const plBtn = dock.querySelector("#plBtn");
-
-  function ui(){
-    plBtn.textContent = audio.paused ? "▶" : "⏸";
-  }
-  ui();
-
-  async function tryPlay(){
-    audio.muted = false;
-    try{ await audio.play(); }catch(e){ /* iOS: solo con gesto */ }
-    ui();
+    try {
+      await audio.play();
+      localStorage.setItem("bgmWanted", "1");
+      setPlayingUI(true);
+      return true;
+    } catch (e) {
+      // iOS / Chrome: si no es acción del usuario, fallará.
+      if (userAction) {
+        // Si incluso con toque falla, normalmente es ruta o mime:
+        // revisa que /audio/uwaie.mp3 abra en el navegador.
+        console.warn("No se pudo reproducir audio:", e);
+      }
+      setPlayingUI(false);
+      return false;
+    }
   }
 
-  plBtn.addEventListener("click", async (e) => {
-    e.preventDefault();
-    if (audio.paused) await tryPlay();
-    else audio.pause();
-    ui();
-  });
-
-  // Primer toque en la página también puede iniciar audio
-  const firstGesture = async () => {
-    if (audio.paused) await tryPlay();
-    document.removeEventListener("touchstart", firstGesture);
-    document.removeEventListener("pointerdown", firstGesture);
-  };
-  document.addEventListener("touchstart", firstGesture, { passive:true, once:true });
-  document.addEventListener("pointerdown", firstGesture, { passive:true, once:true });
-
-  audio.addEventListener("play", ui);
-  audio.addEventListener("pause", ui);
-
-  // =========================
-  // WhatsApp sin mensaje automático
-  // =========================
-  document.querySelectorAll("[data-wa]").forEach(a => {
-    a.setAttribute("href", `https://wa.me/${WA_NUMBER}`);
-    a.setAttribute("target", "_blank");
-    a.setAttribute("rel", "noopener");
-  });
-
-  // =========================
-  // Lightbox pro para .gallery img
-  // =========================
-  let lb = document.getElementById("lightbox");
-  if (!lb){
-    lb = document.createElement("div");
-    lb.id = "lightbox";
-    lb.innerHTML = `
-      <button class="lb-close" type="button" aria-label="Cerrar">×</button>
-      <div class="lb-inner">
-        <img class="lb-img" alt="Foto ampliada" />
-      </div>
-    `;
-    document.body.appendChild(lb);
+  function pauseAudio() {
+    if (!audio) return;
+    audio.pause();
+    localStorage.setItem("bgmWanted", "0");
+    setPlayingUI(false);
   }
 
-  const lbImg = lb.querySelector(".lb-img");
-  const lbClose = lb.querySelector(".lb-close");
+  if (audio && btn) {
+    // estado inicial
+    const wanted = localStorage.getItem("bgmWanted") === "1";
+    setPlayingUI(false);
 
-  function openLB(src){
+    // intento suave al cargar (puede fallar por política)
+    if (wanted) {
+      tryPlay(false);
+    }
+
+    // click explícito
+    btn.addEventListener("click", async () => {
+      if (audio.paused) await tryPlay(true);
+      else pauseAudio();
+    });
+
+    // primer toque en pantalla: intenta reproducir
+    let firstGestureDone = false;
+    const onFirstGesture = async () => {
+      if (firstGestureDone) return;
+      firstGestureDone = true;
+
+      // si el usuario ya quería música antes
+      const wantedNow = localStorage.getItem("bgmWanted") === "1";
+      if (wantedNow) await tryPlay(true);
+    };
+    document.addEventListener("pointerdown", onFirstGesture, { passive: true, once: true });
+  }
+
+  // Minimizar player (se queda solo el botón)
+  if (player && mini) {
+    mini.addEventListener("click", () => {
+      player.classList.toggle("is-collapsed");
+    });
+  }
+
+  // -----------------------------
+  // Modal pro para fotos
+  // -----------------------------
+  const modal = $("#modal");
+  const modalImg = $("#modalImg");
+  const modalClose = $("#modalClose");
+
+  function openModal(src, alt) {
+    if (!modal || !modalImg) return;
+    modalImg.src = src;
+    modalImg.alt = alt || "Foto";
+
+    modal.classList.add("open");
     document.body.classList.add("modal-open");
-    lb.classList.add("open");
-    lbImg.src = src;
   }
-  function closeLB(){
-    lb.classList.remove("open");
+
+  function closeModal() {
+    if (!modal || !modalImg) return;
+    modal.classList.remove("open");
     document.body.classList.remove("modal-open");
-    lbImg.src = "";
+
+    // limpia para evitar “flash” y liberar memoria en móvil
+    modalImg.src = "";
   }
 
-  lbClose.addEventListener("click", closeLB);
-  lb.addEventListener("click", (e) => { if (e.target === lb) closeLB(); });
+  if (modal && modalClose) {
+    modalClose.addEventListener("click", closeModal);
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
+    });
+  }
 
-  document.querySelectorAll(".gallery img").forEach(img => {
-    img.style.cursor = "zoom-in";
-    img.addEventListener("click", () => {
-      const src = img.getAttribute("data-full") || img.currentSrc || img.src;
-      openLB(src);
+  // Enlaza todas las .photo (button) con data-full o img src
+  $$(".photo").forEach((btnPhoto) => {
+    btnPhoto.addEventListener("click", () => {
+      const img = $("img", btnPhoto);
+      const src = btnPhoto.getAttribute("data-full") || (img ? img.getAttribute("src") : "");
+      const alt = img ? img.getAttribute("alt") : "Foto";
+      if (src) openModal(src, alt);
     });
   });
+
+  // -----------------------------
+  // Checklists (Citas/Cupones) con localStorage
+  // -----------------------------
+  $$("[data-store]").forEach((wrap) => {
+    const key = wrap.getAttribute("data-store");
+    const inputs = $$("input[type=checkbox]", wrap);
+
+    // cargar
+    try {
+      const saved = JSON.parse(localStorage.getItem(key) || "{}");
+      inputs.forEach((cb) => {
+        if (saved[cb.id] === true) cb.checked = true;
+      });
+    } catch {}
+
+    // guardar
+    inputs.forEach((cb) => {
+      cb.addEventListener("change", () => {
+        const state = {};
+        inputs.forEach((x) => state[x.id] = x.checked);
+        localStorage.setItem(key, JSON.stringify(state));
+      });
+    });
+  });
+
+  // -----------------------------
+  // Cita aleatoria
+  // -----------------------------
+  const pickBtn = $("#pickDateBtn");
+  const pickOut = $("#pickDateOut");
+  if (pickBtn && pickOut) {
+    pickBtn.addEventListener("click", () => {
+      const ideas = $$("#datesList .check label").map(l => l.textContent.trim()).filter(Boolean);
+      if (!ideas.length) return;
+      const chosen = ideas[Math.floor(Math.random() * ideas.length)];
+      pickOut.textContent = chosen;
+    });
+  }
 
 })();
