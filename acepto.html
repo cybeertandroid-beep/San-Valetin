@@ -2,41 +2,66 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-
-  <title>Gracias mi amor 💗</title>
-
-  <meta name="countdown-to" content="2026-04-12T00:00:00-05:00">
-  <meta name="site-audio" content="audio/uwaie.mp3">
-  <meta name="wa-number" content="51TU_NUMERO_AQUI">
-
-  <link rel="stylesheet" href="shared.css">
-  <link rel="stylesheet" href="styles.css">
-  <script defer src="shared.js"></script>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Gracias 💗</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
-  <div class="wrap">
-    <div class="card">
-      <div class="kicker">Recuerdito 💗</div>
-      <h1>Gracias mi amor por aceptarme 💗</h1>
-      <p class="subtitle">
-        Aunque sea a la distancia, tú sabes que siempre te voy a amar.
-      </p>
 
-      <div class="letter">
-        <p>
-          Sé que ahora será diferente… pero más adelante lo celebraremos como se debe juntos mi amor.
-        </p>
-        <p><b>PD:</b> llegando, nuestra cita queda pendiente 💗</p>
-      </div>
-
-      <div class="actions">
-        <a class="btn btn-primary" data-wa href="#">Decírtelo por WhatsApp 💬</a>
-        <a class="btn btn-ghost" href="recuerdos.html">Recuerdos 💗</a>
-        <a class="btn btn-ghost" href="index.html">Inicio ↩</a>
+  <div class="countdown-wrap">
+    <div id="countdown" class="countdown" data-target="2026-04-12T00:00:00-05:00">
+      <div class="countdown-title"><span>Faltan para volver a vernos</span><span>💗</span></div>
+      <div class="countdown-grid">
+        <div class="cd-box"><div id="cd_days" class="cd-num">--</div><div class="cd-lbl">DÍAS</div></div>
+        <div class="cd-box"><div id="cd_hrs"  class="cd-num">--</div><div class="cd-lbl">HRS</div></div>
+        <div class="cd-box"><div id="cd_min"  class="cd-num">--</div><div class="cd-lbl">MIN</div></div>
+        <div class="cd-box"><div id="cd_sec"  class="cd-num">--</div><div class="cd-lbl">SEG</div></div>
       </div>
     </div>
   </div>
+
+  <audio id="bgm" preload="auto" loop playsinline>
+    <source src="audio/uwaie.mp3" type="audio/mpeg">
+  </audio>
+
+  <div id="player" class="player-wrap" aria-label="Reproductor de música">
+    <button id="playerBtn" class="player-btn" aria-label="Toca para reproducir" aria-pressed="false">
+      <span class="icon play"></span>
+    </button>
+    <div class="player-text">Toca para reproducir</div>
+    <button id="playerMini" class="player-mini" aria-label="Minimizar">▾</button>
+  </div>
+
+  <main class="page">
+    <div class="container">
+      <section class="card">
+        <div class="kicker">💗</div>
+        <h1>Gracias mi amor por aceptarme 💗</h1>
+        <p class="subtitle">Aunque sea a la distancia… siempre te voy a amar.</p>
+
+        <div class="letter">
+          <p>
+            Sé que ahora será diferente… pero más adelante lo celebraremos como se debe juntos mi amor.
+          </p>
+          <p style="margin-bottom:0;"><b>PD:</b> Llegando, nuestra cita queda pendiente 💗</p>
+        </div>
+
+        <div class="actions">
+          <a class="btn btn-primary" data-wa="open" href="#">Abrir WhatsApp 💬</a>
+          <a class="btn btn-ghost" href="index.html">Inicio ↩</a>
+          <a class="btn btn-ghost" href="recuerdos.html">Recuerdos 💗</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="modal" class="modal" aria-hidden="true">
+    <button id="modalClose" class="modal-close" aria-label="Cerrar">✕</button>
+    <div class="modal-box">
+      <img id="modalImg" class="modal-img" alt="Foto ampliada">
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
 </body>
 </html>
