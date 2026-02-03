@@ -1,6 +1,6 @@
 (() => {
   // ==========================
-  //  MUSIC: persist between pages
+  //  MUSIC: persist between pages + auto-find source
   // ==========================
   const audio = document.getElementById('bgm');
   const playBtn = document.getElementById('playBtn');
@@ -14,10 +14,68 @@
     if (!audio) return;
     localStorage.setItem('bgm_playing', audio.paused ? '0' : '1');
     localStorage.setItem('bgm_time', String(audio.currentTime || 0));
+    if (audio.currentSrc) localStorage.setItem('bgm_src', audio.currentSrc);
+  }
+
+  function unique(arr){
+    const seen = new Set();
+    return arr.filter(x => (x && !seen.has(x) && seen.add(x)));
+  }
+
+  function loadCandidate(url, timeoutMs = 7000){
+    return new Promise((resolve, reject) => {
+      if (!audio) return reject();
+
+      const onOk = () => cleanup(() => resolve(url));
+      const onErr = () => cleanup(() => reject());
+      const t = setTimeout(() => cleanup(() => reject()), timeoutMs);
+
+      function cleanup(done){
+        clearTimeout(t);
+        audio.removeEventListener('canplaythrough', onOk);
+        audio.removeEventListener('error', onErr);
+        done();
+      }
+
+      audio.addEventListener('canplaythrough', onOk, { once:true });
+      audio.addEventListener('error', onErr, { once:true });
+
+      audio.src = url;
+      audio.load();
+    });
+  }
+
+  async function ensureAudioSource(){
+    if (!audio) return;
+
+    const stored = localStorage.getItem('bgm_src') || '';
+    const candidates = unique([
+      stored,
+      // raíz (con y sin encode)
+      "UWAIE%20-%20Kapo%20(Video%20Oficial).mp3",
+      "UWAIE - Kapo (Video Oficial).mp3",
+      // /audio (con y sin encode)
+      "audio/UWAIE%20-%20Kapo%20(Video%20Oficial).mp3",
+      "audio/UWAIE - Kapo (Video Oficial).mp3",
+    ]);
+
+    // Si ya tiene src válido, no molestamos
+    if (audio.currentSrc) return;
+
+    for (const url of candidates){
+      try {
+        await loadCandidate(url);
+        localStorage.setItem('bgm_src', url);
+        return;
+      } catch(e) {}
+    }
   }
 
   async function restoreState(){
     if (!audio) return;
+
+    await ensureAudioSource();
+
     const t = parseFloat(localStorage.getItem('bgm_time') || '0');
     const p = localStorage.getItem('bgm_playing') || '0';
 
@@ -33,7 +91,7 @@
         await audio.play();
         setBtn(true);
       } catch (e) {
-        // Autoplay bloqueado: el usuario debe tocar play
+        // Autoplay bloqueado: usuario debe tocar Play
         setBtn(false);
       }
     } else {
@@ -48,6 +106,8 @@
 
   if (playBtn && audio) {
     playBtn.addEventListener('click', async () => {
+      await ensureAudioSource();
+
       if (audio.paused) {
         try { await audio.play(); setBtn(true); } catch(e){ setBtn(false); }
       } else {
@@ -59,7 +119,7 @@
   }
 
   // ==========================
-  //  MODAL: open/close, ESC, scroll lock (solo en Recuerdos)
+  //  MODAL: (solo en Recuerdos)
   // ==========================
   const modal = document.getElementById('modal');
   const modalImg = document.getElementById('modalImg');
@@ -74,8 +134,7 @@
 
   function openModal(src){
     if (!modal || !modalImg || !src) return;
-    const safeSrc = encodeURI(src); // por si viene con espacios
-    modalImg.src = safeSrc;
+    modalImg.src = encodeURI(src);
     modal.classList.add('open');
     modal.setAttribute('aria-hidden','false');
     lockScroll(true);
