@@ -3,22 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Recuerdos 📸</title>
+  <title>Recuerdos 💗</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="fade-in">
   <div class="bg"></div>
   <div class="hearts"></div>
 
-  <audio id="bgm" preload="auto" loop>
-    <source src="UWAIE%20-%20Kapo%20(Video%20Oficial).mp3" type="audio/mpeg">
-    <source src="audio/UWAIE%20-%20Kapo%20(Video%20Oficial).mp3" type="audio/mpeg">
-  </audio>
-
-  <!-- COUNTDOWN: dock grande fijo -->
-  <aside class="countdown-dock" id="countdownDock" aria-live="polite">
-    <div class="cd-title">Faltan para volver a vernos, mi amor ✨</div>
-    <div class="cd-clock-grid">
+  <!-- COUNTDOWN (VISIBLE SIEMPRE) -->
+  <aside class="countdown-float" aria-live="polite">
+    <div class="cd-title">Faltan para volver a vernos 💗</div>
+    <div class="cd-grid">
       <div class="cd-chip"><span class="cd-num" id="cdDays">--</span><span class="cd-lab">DÍAS</span></div>
       <div class="cd-chip"><span class="cd-num" id="cdHours">--</span><span class="cd-lab">HRS</span></div>
       <div class="cd-chip"><span class="cd-num" id="cdMins">--</span><span class="cd-lab">MIN</span></div>
@@ -26,33 +21,36 @@
     </div>
   </aside>
 
+  <audio id="bgm" preload="metadata" loop>
+    <source src="UWAIE%20-%20Kapo%20(Video%20Oficial).mp3" type="audio/mpeg">
+    <source src="audio/UWAIE%20-%20Kapo%20(Video%20Oficial).mp3" type="audio/mpeg">
+  </audio>
+
   <main class="page">
     <div class="container">
       <section class="card">
-        <p class="mini">Recuerdos 📸</p>
-        <h1>Momentos que me hacen sonreír</h1>
+        <p class="mini">Recuerdos 💗</p>
+        <h1>Recuerdos juntos que me hacen feliz</h1>
         <p>Toca una foto para verla mejor.</p>
 
-        <div class="section-title">Juntos 🤍 (A1, A2)</div>
+        <div class="section-title">Fotos que me hicieron enamorarme más de ti 💗</div>
         <div class="gallery">
+          <!-- Juntos + WhatsApp (todo aquí) -->
           <img class="photo" src="fotos/A1.jpeg" alt="A1">
           <img class="photo" src="fotos/A2.jpeg" alt="A2">
+
+          <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.11.17%20AM.jpeg" alt="WhatsApp 1">
+          <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.16.44%20AM.jpeg" alt="WhatsApp 2">
+          <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.22.03%20AM.jpeg" alt="WhatsApp 3">
         </div>
 
-        <div class="section-title">Cosas que me gustan y me hacen amarte ✨ (D1–D5)</div>
+        <div class="section-title">Momentos que me encantan de ti ✨ (D1–D5)</div>
         <div class="gallery">
           <img class="photo" src="fotos/D1.jpeg" alt="D1">
           <img class="photo" src="fotos/D2.jpeg" alt="D2">
           <img class="photo" src="fotos/D3.jpeg" alt="D3">
           <img class="photo" src="fotos/D4.jpeg" alt="D4">
           <img class="photo" src="fotos/D5.jpeg" alt="D5">
-        </div>
-
-        <div class="section-title">Más momentos 📱 (WhatsApp)</div>
-        <div class="gallery">
-          <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.11.17%20AM.jpeg" alt="WhatsApp 1">
-          <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.16.44%20AM.jpeg" alt="WhatsApp 2">
-          <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.22.03%20AM.jpeg" alt="WhatsApp 3">
         </div>
 
         <div class="row" style="margin-top:16px">
@@ -72,7 +70,6 @@
     </div>
   </div>
 
-  <!-- Player fijo abajo-derecha -->
   <div class="player" aria-label="Reproductor">
     <button class="btn primary" id="playBtn" type="button">▶</button>
     <small>UWAIE - Kapo</small>
