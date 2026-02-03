@@ -10,35 +10,24 @@
   <div class="bg"></div>
   <div class="hearts"></div>
 
-  <!-- COUNTDOWN (VISIBLE SIEMPRE) -->
-  <aside class="countdown-float" aria-live="polite">
-    <div class="cd-title">Faltan para volver a vernos 💗</div>
-    <div class="cd-grid">
-      <div class="cd-chip"><span class="cd-num" id="cdDays">--</span><span class="cd-lab">DÍAS</span></div>
-      <div class="cd-chip"><span class="cd-num" id="cdHours">--</span><span class="cd-lab">HRS</span></div>
-      <div class="cd-chip"><span class="cd-num" id="cdMins">--</span><span class="cd-lab">MIN</span></div>
-      <div class="cd-chip"><span class="cd-num" id="cdSecs">--</span><span class="cd-lab">SEG</span></div>
-    </div>
-  </aside>
-
-  <audio id="bgm" preload="metadata" loop>
-    <source src="UWAIE%20-%20Kapo%20(Video%20Oficial).mp3" type="audio/mpeg">
-    <source src="audio/UWAIE%20-%20Kapo%20(Video%20Oficial).mp3" type="audio/mpeg">
+  <audio id="bgm" preload="auto" loop>
+    <source src="audio/uwaie.mp3" type="audio/mpeg">
   </audio>
 
   <main class="page">
     <div class="container">
       <section class="card">
         <p class="mini">Recuerdos 💗</p>
-        <h1>Recuerdos juntos que me hacen feliz</h1>
+        <h1>Momentos que nunca olvidaré a tu lado</h1>
         <p>Toca una foto para verla mejor.</p>
 
         <div class="section-title">Fotos que me hicieron enamorarme más de ti 💗</div>
         <div class="gallery">
-          <!-- Juntos + WhatsApp (todo aquí) -->
+          <!-- A1, A2 -->
           <img class="photo" src="fotos/A1.jpeg" alt="A1">
           <img class="photo" src="fotos/A2.jpeg" alt="A2">
 
+          <!-- WhatsApp (van aquí también) -->
           <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.11.17%20AM.jpeg" alt="WhatsApp 1">
           <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.16.44%20AM.jpeg" alt="WhatsApp 2">
           <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.22.03%20AM.jpeg" alt="WhatsApp 3">
@@ -70,6 +59,7 @@
     </div>
   </div>
 
+  <!-- Player fijo abajo-derecha -->
   <div class="player" aria-label="Reproductor">
     <button class="btn primary" id="playBtn" type="button">▶</button>
     <small>UWAIE - Kapo</small>
@@ -77,6 +67,7 @@
 
   <script>
     function pageGo(url){
+      if (window.__saveBgmState) { try { window.__saveBgmState(); } catch(e){} }
       document.body.classList.add('fade-out');
       setTimeout(()=> location.href = url, 240);
     }
@@ -84,7 +75,6 @@
     document.getElementById('backInicio').addEventListener('click', ()=> pageGo('index.html'));
   </script>
 
-  <script src="countdown.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
