@@ -11,20 +11,8 @@
   <div class="hearts"></div>
   <div class="heart-burst" id="burst"></div>
 
-  <!-- COUNTDOWN (VISIBLE SIEMPRE) -->
-  <aside class="countdown-float" aria-live="polite">
-    <div class="cd-title">Faltan para volver a vernos 💗</div>
-    <div class="cd-grid">
-      <div class="cd-chip"><span class="cd-num" id="cdDays">--</span><span class="cd-lab">DÍAS</span></div>
-      <div class="cd-chip"><span class="cd-num" id="cdHours">--</span><span class="cd-lab">HRS</span></div>
-      <div class="cd-chip"><span class="cd-num" id="cdMins">--</span><span class="cd-lab">MIN</span></div>
-      <div class="cd-chip"><span class="cd-num" id="cdSecs">--</span><span class="cd-lab">SEG</span></div>
-    </div>
-  </aside>
-
-  <audio id="bgm" preload="metadata" loop>
-    <source src="UWAIE%20-%20Kapo%20(Video%20Oficial).mp3" type="audio/mpeg">
-    <source src="audio/UWAIE%20-%20Kapo%20(Video%20Oficial).mp3" type="audio/mpeg">
+  <audio id="bgm" preload="auto" loop>
+    <source src="audio/uwaie.mp3" type="audio/mpeg">
   </audio>
 
   <main class="page">
@@ -49,9 +37,10 @@
           </p>
         </div>
 
+        <!-- Botones en columna, centrados -->
         <div class="stack">
           <button class="btn primary big pulse" id="btnAsk" type="button">¿Quieres ser mi 14 de febrero? 💘</button>
-          <button class="btn" id="goRecuerdos" type="button">Recuerdos 💗</button>
+          <button class="btn" id="goRecuerdos" type="button">Recuerdos 📸</button>
           <button class="btn" id="goVolver" type="button">Volver ↩️</button>
         </div>
 
@@ -64,9 +53,8 @@
           </p>
 
           <div class="row" style="margin-top:14px">
-            <!-- WhatsApp FIX: sin símbolo raro, con corazón bien codificado -->
             <a class="btn primary" target="_blank" rel="noopener"
-              href="https://wa.me/51990367042?text=S%C3%AD%20%E2%9D%A4%EF%B8%8F%20acepto%20ser%20tu%2014%20de%20febrero">
+              href="https://wa.me/51990367042?text=S%C3%AD%20%F0%9F%92%98%20acepto%20ser%20tu%2014%20de%20febrero">
               Decirte que SÍ por WhatsApp 💬
             </a>
           </div>
@@ -75,6 +63,7 @@
     </div>
   </main>
 
+  <!-- Player fijo abajo-derecha -->
   <div class="player" aria-label="Reproductor">
     <button class="btn primary" id="playBtn" type="button">▶</button>
     <small>UWAIE - Kapo</small>
@@ -82,12 +71,14 @@
 
   <script>
     function pageGo(url){
+      if (window.__saveBgmState) { try { window.__saveBgmState(); } catch(e){} }
       document.body.classList.add('fade-out');
       setTimeout(()=> location.href = url, 240);
     }
     document.getElementById('goRecuerdos').addEventListener('click', ()=> pageGo('recuerdos.html'));
     document.getElementById('goVolver').addEventListener('click', ()=> pageGo('index.html'));
 
+    // Muchos corazones al click
     function heartsBurst(){
       const wrap = document.getElementById('burst');
       wrap.innerHTML = '';
@@ -107,15 +98,19 @@
     const btnAsk = document.getElementById('btnAsk');
     const reveal = document.getElementById('reveal');
 
-    btnAsk.addEventListener('click', ()=>{
+    btnAsk.addEventListener('click', async ()=>{
+      // intento reproducir (por si en móvil todavía no lo desbloqueó)
+      if (window.__startBgm) { try { await window.__startBgm(true); } catch(e){} }
+
       heartsBurst();
       reveal.classList.add('show');
       reveal.setAttribute('aria-hidden','false');
       if(navigator.vibrate) navigator.vibrate([30,20,30]);
+
+      if (window.__saveBgmState) { try { window.__saveBgmState(); } catch(e){} }
     });
   </script>
 
-  <script src="countdown.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
