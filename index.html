@@ -3,89 +3,108 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Para mi persona favorita 💗</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
-
+  <title>Para ti 💗</title>
   <link rel="stylesheet" href="styles.css" />
-  <script defer src="app.js"></script>
 </head>
+<body>
 
-<body data-page="home">
-  <div class="bg" aria-hidden="true"></div>
-
-  <!-- UI global (contador + reproductor) -->
-  <div id="floating-ui"></div>
-
-  <!-- Lightbox global -->
-  <div id="lightbox" class="lightbox" aria-hidden="true">
-    <div class="lightbox__backdrop" data-close></div>
-    <div class="lightbox__panel" role="dialog" aria-modal="true">
-      <button class="lightbox__close" type="button" aria-label="Cerrar" data-close>✕</button>
-      <img class="lightbox__img" alt="" />
+  <!-- CONTADOR (todas las páginas) -->
+  <div class="countdown-wrap">
+    <div id="countdown" class="countdown" data-target="2026-04-12T00:00:00-05:00">
+      <div class="countdown-title">
+        <span>Faltan para volver a vernos</span>
+        <span>💗</span>
+      </div>
+      <div class="countdown-grid">
+        <div class="cd-box"><div id="cd_days" class="cd-num">--</div><div class="cd-lbl">DÍAS</div></div>
+        <div class="cd-box"><div id="cd_hrs"  class="cd-num">--</div><div class="cd-lbl">HRS</div></div>
+        <div class="cd-box"><div id="cd_min"  class="cd-num">--</div><div class="cd-lbl">MIN</div></div>
+        <div class="cd-box"><div id="cd_sec"  class="cd-num">--</div><div class="cd-lbl">SEG</div></div>
+      </div>
     </div>
   </div>
 
+  <!-- AUDIO (todas las páginas) -->
+  <audio id="bgm" preload="auto" loop playsinline>
+    <source src="audio/uwaie.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- PLAYER abajo (sin nombre) -->
+  <div id="player" class="player-wrap" aria-label="Reproductor de música">
+    <button id="playerBtn" class="player-btn" aria-label="Toca para reproducir" aria-pressed="false">
+      <span class="icon play"></span>
+    </button>
+    <div class="player-text">Toca para reproducir</div>
+    <button id="playerMini" class="player-mini" aria-label="Minimizar">▾</button>
+  </div>
+
   <main class="page">
-    <section class="card hero">
-      <p class="kicker">Sorpresa ✨</p>
-      <h1 class="title">Te pienso más de lo que crees</h1>
-      <p class="subtitle">y aunque estés lejos, quería estar cerquita de alguna forma.</p>
+    <div class="container">
+      <section class="card">
 
-      <div class="letter">
-        <div class="letter__head">
-          <h2>Hola preciosa <span aria-hidden="true">🤍</span> <span aria-hidden="true">💗</span></h2>
-          <p class="letter__hint">💞 💞 💞</p>
+        <div class="kicker">Sorpresa ✨</div>
+        <h1>Te pienso más de lo que crees</h1>
+        <p class="subtitle">y aunque estés lejos, quería estar cerquita de alguna forma.</p>
+
+        <div class="letter">
+          <h3>Hola preciosa 🤍 💗</h3>
+
+          <p>
+            Para comenzar este pequeño detalle mi amor que espero te guste y te haya sorprendido al menos,
+            quiero que sepas que te amo mucho, sé que nuestra historia juntos acaba de comenzar y no llevamos
+            mucho tiempo conociéndonos como pareja, aun así siento que te conozco bien amor, confío en ti y
+            puedo entregarme a ti mi amor.
+          </p>
+
+          <p>
+            Tal vez yo no sea el chico más romántico o tal vez detallista, trato de mejorar eso mi amor por ti.
+            Quiero que te sientas valorada y amada por mí. Quiero que a pesar de todo tu pasado tal vez que te
+            fallaron, igual a mí, no sientas que yo te haré lo mismo mi amor. Quiero que confíes en mí.
+          </p>
+
+          <p>
+            También quiero estar juntos para ver nuestros logros juntos, vivir muchas experiencias, viajar,
+            salir, comer, bailar, tomar algo… así sea lo que sea pero estar juntos.
+            Sé que no te esperabas que sucediera lo de nosotros, igual que yo, pero es la cosa más bonita que me pasó.
+            Espero que sea el tuyo también amor.
+          </p>
+
+          <p>
+            Tal vez este viaje al comienzo de nuestra historia es un reto fuerte, porque por lo general al comienzo
+            de una relación es estar siempre juntos y conocernos… pero a pesar de eso, no quita el hecho que yo me enamoré
+            cada día más de ti. Si superamos esto (y lo tomo por hecho) sé que estaremos juntos toda la vida.
+          </p>
+
+          <p style="margin-bottom:0;">
+            Quiero que te diviertas, te relajes y me extrañes mucho mi amor. Te extraño mucho amor, y quería que tengas
+            algo bonito para este 14, porque es nuestro primer 14.
+          </p>
+
+          <div class="note">💗 💗 💗</div>
         </div>
 
-        <p>
-          Para comenzar este pequeño detalle mi amor que espero te guste y te haya sorprendido al menos, quiero que sepas
-          que te amo mucho, sé que nuestra historia juntos acaba de comenzar y no llevamos mucho tiempo conociéndonos como
-          pareja, aun así siento que te conozco bien amor, confío en ti y puedo entregarme a ti mi amor.
-        </p>
+        <div class="actions">
+          <!-- WhatsApp SIN mensaje automático -->
+          <a class="btn btn-primary" data-wa="open" href="#">¿Quieres ser mi 14 de febrero? 💘</a>
 
-        <p>
-          Tal vez yo no sea el chico más romántico o tal vez detallista, trato de mejorar eso mi amor por ti. Quiero que te sientas
-          valorada y amada por mí. Quiero que a pesar de todo tu pasado tal vez te fallaron, igual a mí, no sientas que yo te haré lo mismo mi amor.
-          Quiero que confíes en mí.
-        </p>
-
-        <p>
-          También quiero estar juntos para ver nuestros logros juntos, vivir muchas experiencias, viajar, salir, comer, bailar, tomar algo…
-          así sea lo que sea pero estar juntos. Sé que no te esperabas que sucediera lo de nosotros, igual que yo, pero es la cosa más bonita que me pasó.
-          Espero que sea el tuyo también amor.
-        </p>
-
-        <p>
-          Tal vez este viaje al comienzo de nuestra historia es un reto fuerte, porque por lo general al comienzo de una relación es estar
-          siempre juntos y conocernos… pero a pesar de eso, no quita el hecho que yo me enamoré cada día más de ti.
-          Si superamos esto (y lo tomo por hecho) sé que estaremos juntos toda la vida.
-        </p>
-
-        <p class="letter__footer">
-          Quiero que te diviertas, te relajes y me extrañes mucho mi amor. Te extraño mucho amor, y quería que tengas algo bonito para este 14,
-          porque es nuestro primer 14. 💗
-        </p>
-
-        <div class="letter__hearts" aria-hidden="true">
-          <span>💗</span><span>💗</span><span>💗</span><span>💗</span><span>💗</span>
+          <a class="btn btn-ghost" href="recuerdos.html">Recuerdos 💗</a>
+          <a class="btn btn-ghost" href="citas.html">Citas ✨</a>
+          <a class="btn btn-ghost" href="cupones.html">Cupones 💗</a>
+          <a class="btn btn-ghost" href="amo.html">5 cosas que amo 💗</a>
         </div>
-      </div>
 
-      <div class="actions">
-        <a class="btn primary" href="#" data-wa>
-          ¿Quieres ser mi 14 de febrero? 💘
-        </a>
-
-        <div class="btn-row">
-          <a class="btn ghost" href="recuerdos.html">Recuerdos 💗</a>
-          <a class="btn ghost" href="citas.html">Citas ✨</a>
-          <a class="btn ghost" href="cupones.html">Cupones 🎟️</a>
-        </div>
-      </div>
-    </section>
+      </section>
+    </div>
   </main>
+
+  <!-- MODAL (todas las páginas) -->
+  <div id="modal" class="modal" aria-hidden="true">
+    <button id="modalClose" class="modal-close" aria-label="Cerrar">✕</button>
+    <div class="modal-box">
+      <img id="modalImg" class="modal-img" alt="Foto ampliada">
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
 </body>
 </html>
