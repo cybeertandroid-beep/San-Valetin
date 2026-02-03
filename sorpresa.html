@@ -11,7 +11,21 @@
   <div class="hearts"></div>
   <div class="heart-burst" id="burst"></div>
 
-  <audio id="bgm" preload="auto" loop>
+  <!-- COUNTDOWN (en todas las páginas) -->
+  <aside class="countdown-float" id="countdownFloat" aria-live="polite">
+    <div class="cd-head">
+      <span class="cd-title">Faltan para volver a vernos</span>
+      <span class="cd-heart">💗</span>
+    </div>
+    <div class="cd-grid">
+      <div class="cd-pill"><span class="cd-n" id="cdDays">--</span><span class="cd-l">DÍAS</span></div>
+      <div class="cd-pill"><span class="cd-n" id="cdHours">--</span><span class="cd-l">HRS</span></div>
+      <div class="cd-pill"><span class="cd-n" id="cdMins">--</span><span class="cd-l">MIN</span></div>
+      <div class="cd-pill"><span class="cd-n" id="cdSecs">--</span><span class="cd-l">SEG</span></div>
+    </div>
+  </aside>
+
+  <audio id="bgm" preload="auto" loop playsinline>
     <source src="audio/uwaie.mp3" type="audio/mpeg">
   </audio>
 
@@ -22,7 +36,7 @@
         <h1>Te pienso más de lo que crees</h1>
         <p>y aunque estés lejos, quería estar cerquita de alguna forma.</p>
 
-        <div class="letter" style="text-align:left">
+        <div class="letter letter-hearts" style="text-align:left">
           <p style="margin:0">
             <b>Hola preciosa 🤍❣️</b><br><br>
             Para comenzar este pequeño detalle mi amor que espero te guste y te haya sorprendido al menos, quiero que sepas que te amo mucho, se que nuestra historia juntos acaba de comenzar y no llevamos mucho tiempo conociéndonos como pareja, aun así siento que te conozco bien amor, confío en ti y puedo entregarme a ti mi amor.<br><br>
@@ -40,7 +54,7 @@
         <!-- Botones en columna, centrados -->
         <div class="stack">
           <button class="btn primary big pulse" id="btnAsk" type="button">¿Quieres ser mi 14 de febrero? 💘</button>
-          <button class="btn" id="goRecuerdos" type="button">Recuerdos 📸</button>
+          <button class="btn" id="goRecuerdos" type="button">Recuerdos 💗</button>
           <button class="btn" id="goVolver" type="button">Volver ↩️</button>
         </div>
 
@@ -54,7 +68,7 @@
 
           <div class="row" style="margin-top:14px">
             <a class="btn primary" target="_blank" rel="noopener"
-              href="https://wa.me/51990367042?text=S%C3%AD%20%F0%9F%92%98%20acepto%20ser%20tu%2014%20de%20febrero">
+              href="https://wa.me/51990367042?text=Sí%20💘%20acepto%20ser%20tu%2014%20de%20febrero">
               Decirte que SÍ por WhatsApp 💬
             </a>
           </div>
@@ -71,7 +85,6 @@
 
   <script>
     function pageGo(url){
-      if (window.__saveBgmState) { try { window.__saveBgmState(); } catch(e){} }
       document.body.classList.add('fade-out');
       setTimeout(()=> location.href = url, 240);
     }
@@ -82,7 +95,7 @@
     function heartsBurst(){
       const wrap = document.getElementById('burst');
       wrap.innerHTML = '';
-      const n = 160;
+      const n = 140;
       for(let i=0;i<n;i++){
         const h = document.createElement('i');
         h.textContent = '❤';
@@ -98,16 +111,11 @@
     const btnAsk = document.getElementById('btnAsk');
     const reveal = document.getElementById('reveal');
 
-    btnAsk.addEventListener('click', async ()=>{
-      // intento reproducir (por si en móvil todavía no lo desbloqueó)
-      if (window.__startBgm) { try { await window.__startBgm(true); } catch(e){} }
-
+    btnAsk.addEventListener('click', ()=>{
       heartsBurst();
       reveal.classList.add('show');
       reveal.setAttribute('aria-hidden','false');
       if(navigator.vibrate) navigator.vibrate([30,20,30]);
-
-      if (window.__saveBgmState) { try { window.__saveBgmState(); } catch(e){} }
     });
   </script>
 
