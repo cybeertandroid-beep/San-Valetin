@@ -4,52 +4,87 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Recuerdos 💗</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="styles.css" />
-  <script defer src="app.js"></script>
 </head>
+<body>
 
-<body data-page="recuerdos">
-  <div class="bg" aria-hidden="true"></div>
-
-  <div id="floating-ui"></div>
-
-  <div id="lightbox" class="lightbox" aria-hidden="true">
-    <div class="lightbox__backdrop" data-close></div>
-    <div class="lightbox__panel" role="dialog" aria-modal="true">
-      <button class="lightbox__close" type="button" aria-label="Cerrar" data-close>✕</button>
-      <img class="lightbox__img" alt="" />
+  <div class="countdown-wrap">
+    <div id="countdown" class="countdown" data-target="2026-04-12T00:00:00-05:00">
+      <div class="countdown-title">
+        <span>Faltan para volver a vernos</span>
+        <span>💗</span>
+      </div>
+      <div class="countdown-grid">
+        <div class="cd-box"><div id="cd_days" class="cd-num">--</div><div class="cd-lbl">DÍAS</div></div>
+        <div class="cd-box"><div id="cd_hrs"  class="cd-num">--</div><div class="cd-lbl">HRS</div></div>
+        <div class="cd-box"><div id="cd_min"  class="cd-num">--</div><div class="cd-lbl">MIN</div></div>
+        <div class="cd-box"><div id="cd_sec"  class="cd-num">--</div><div class="cd-lbl">SEG</div></div>
+      </div>
     </div>
   </div>
 
+  <audio id="bgm" preload="auto" loop playsinline>
+    <source src="audio/uwaie.mp3" type="audio/mpeg">
+  </audio>
+
+  <div id="player" class="player-wrap" aria-label="Reproductor de música">
+    <button id="playerBtn" class="player-btn" aria-label="Toca para reproducir" aria-pressed="false">
+      <span class="icon play"></span>
+    </button>
+    <div class="player-text">Toca para reproducir</div>
+    <button id="playerMini" class="player-mini" aria-label="Minimizar">▾</button>
+  </div>
+
   <main class="page">
-    <section class="card hero">
-      <p class="kicker">Recuerdos 💗</p>
-      <h1 class="title">Momentos que nunca olvidaré a tu lado</h1>
-      <p class="subtitle">Toca una foto para verla mejor.</p>
+    <div class="container">
+      <section class="card">
+        <div class="kicker">Recuerdos 💗</div>
+        <h1>Momentos que nunca olvidaré a tu lado</h1>
+        <p class="subtitle">Toca una foto para verla mejor.</p>
 
-      <section class="block">
-        <h2 class="section-title">Momentos que nunca se me olvidarán a tu lado mi amor 💖</h2>
-        <div class="grid" id="gridA"></div>
-      </section>
+        <div class="hr"></div>
 
-      <section class="block">
-        <h2 class="section-title">Fotos que me hicieron enamorar más de ti 💗</h2>
-        <div class="grid" id="gridD"></div>
-      </section>
+        <div class="section-title">Momentos que nunca se me olvidarán a tu lado 💗</div>
+        <p class="section-sub">A1 – A5</p>
 
-      <div class="actions">
-        <div class="btn-row">
-          <a class="btn ghost" href="index.html">Inicio 🏠</a>
-          <a class="btn ghost" href="citas.html">Citas ✨</a>
-          <a class="btn ghost" href="cupones.html">Cupones 🎟️</a>
+        <div class="grid">
+          <button class="photo" data-full="fotos/A1.jpeg"><img src="fotos/A1.jpeg" alt="Momento A1" loading="lazy"></button>
+          <button class="photo" data-full="fotos/A2.jpeg"><img src="fotos/A2.jpeg" alt="Momento A2" loading="lazy"></button>
+          <button class="photo" data-full="fotos/A3.jpeg"><img src="fotos/A3.jpeg" alt="Momento A3" loading="lazy"></button>
+          <button class="photo" data-full="fotos/A4.jpeg"><img src="fotos/A4.jpeg" alt="Momento A4" loading="lazy"></button>
+          <button class="photo" data-full="fotos/A5.jpeg"><img src="fotos/A5.jpeg" alt="Momento A5" loading="lazy"></button>
         </div>
-      </div>
-    </section>
+
+        <div class="hr"></div>
+
+        <div class="section-title">Fotos que me hicieron enamorarme más de ti 💗</div>
+        <p class="section-sub">D1 – D5</p>
+
+        <div class="grid">
+          <button class="photo" data-full="fotos/D1.jpeg"><img src="fotos/D1.jpeg" alt="Foto D1" loading="lazy"></button>
+          <button class="photo" data-full="fotos/D2.jpeg"><img src="fotos/D2.jpeg" alt="Foto D2" loading="lazy"></button>
+          <button class="photo" data-full="fotos/D3.jpeg"><img src="fotos/D3.jpeg" alt="Foto D3" loading="lazy"></button>
+          <button class="photo" data-full="fotos/D4.jpeg"><img src="fotos/D4.jpeg" alt="Foto D4" loading="lazy"></button>
+          <button class="photo" data-full="fotos/D5.jpeg"><img src="fotos/D5.jpeg" alt="Foto D5" loading="lazy"></button>
+        </div>
+
+        <div class="actions" style="margin-top:20px;">
+          <a class="btn btn-ghost" href="index.html">Inicio ↩</a>
+          <a class="btn btn-ghost" href="citas.html">Citas ✨</a>
+          <a class="btn btn-ghost" href="cupones.html">Cupones 💗</a>
+          <a class="btn btn-primary" data-wa="open" href="#">Abrir WhatsApp 💗</a>
+        </div>
+      </section>
+    </div>
   </main>
+
+  <div id="modal" class="modal" aria-hidden="true">
+    <button id="modalClose" class="modal-close" aria-label="Cerrar">✕</button>
+    <div class="modal-box">
+      <img id="modalImg" class="modal-img" alt="Foto ampliada">
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
 </body>
 </html>
