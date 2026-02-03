@@ -83,4 +83,39 @@
   <script>
     function pageGo(url){
       document.body.classList.add('fade-out');
-      setTime
+      setTimeout(()=> location.href = url, 240);
+    }
+    document.getElementById('goRecuerdos').addEventListener('click', ()=> pageGo('recuerdos.html'));
+    document.getElementById('goVolver').addEventListener('click', ()=> pageGo('index.html'));
+
+    function heartsBurst(){
+      const wrap = document.getElementById('burst');
+      wrap.innerHTML = '';
+      const n = 160;
+      for(let i=0;i<n;i++){
+        const h = document.createElement('i');
+        h.textContent = '❤';
+        h.style.left = (Math.random()*100) + 'vw';
+        h.style.fontSize = (14 + Math.random()*28) + 'px';
+        h.style.animationDelay = (Math.random()*0.35) + 's';
+        h.style.opacity = (0.65 + Math.random()*0.35).toFixed(2);
+        wrap.appendChild(h);
+      }
+      setTimeout(()=> wrap.innerHTML='', 2300);
+    }
+
+    const btnAsk = document.getElementById('btnAsk');
+    const reveal = document.getElementById('reveal');
+
+    btnAsk.addEventListener('click', ()=>{
+      heartsBurst();
+      reveal.classList.add('show');
+      reveal.setAttribute('aria-hidden','false');
+      if(navigator.vibrate) navigator.vibrate([30,20,30]);
+    });
+  </script>
+
+  <script src="countdown.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
