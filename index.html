@@ -2,65 +2,61 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
   <title>Para mi persona favorita 💗</title>
-  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Ajusta fecha real -->
+  <meta name="countdown-to" content="2026-04-12T00:00:00-05:00">
+
+  <!-- Audio -->
+  <meta name="site-audio" content="audio/uwaie.mp3">
+
+  <!-- WhatsApp (solo abre chat) -->
+  <meta name="wa-number" content="51TU_NUMERO_AQUI">
+
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="shared.js"></script>
 </head>
 
-<body class="fade-in">
-  <div class="bg"></div>
-  <div class="hearts"></div>
-  <div class="heart-burst" id="heartBurst"></div>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="kicker">Sorpresa ✨</div>
+      <h1>Te pienso más de lo que crees</h1>
+      <p class="subtitle">y aunque estés lejos, quería estar cerquita de alguna forma.</p>
 
-  <!-- CONTADOR -->
-  <aside class="countdown" id="countdown" aria-live="polite">
-    <div class="cd-head">
-      <span class="cd-title">Faltan para volver a vernos</span>
-      <span class="cd-heart" aria-hidden="true">💗</span>
-    </div>
-    <div class="cd-grid">
-      <div class="cd-cell"><span class="cd-num" id="cdDays">--</span><span class="cd-lab">DÍAS</span></div>
-      <div class="cd-cell"><span class="cd-num" id="cdHours">--</span><span class="cd-lab">HRS</span></div>
-      <div class="cd-cell"><span class="cd-num" id="cdMins">--</span><span class="cd-lab">MIN</span></div>
-      <div class="cd-cell"><span class="cd-num" id="cdSecs">--</span><span class="cd-lab">SEG</span></div>
-    </div>
-  </aside>
+      <div class="letter">
+        <h3>Hola preciosa 💗</h3>
 
-  <!-- AUDIO -->
-  <audio id="bgm" preload="metadata" loop playsinline>
-    <source src="audio/uwaie.mp3" type="audio/mpeg">
-  </audio>
-
-  <main class="page">
-    <div class="container">
-      <section class="card hero">
-        <p class="mini">Para ti, mi amor 💗</p>
-        <h1>Lo mejor que me pasó este año…</h1>
-        <p class="lead">te hice algo especial. Espero te guste. <b>Hecho con amor</b> 💗</p>
-
-        <hr class="soft" />
-
-        <div class="btn-row">
-          <a class="btn btn-primary" href="sorpresa.html" id="btnStart">Ver sorpresa ✨</a>
-          <a class="btn btn-ghost" href="recuerdos.html">Ir a recuerdos 💗</a>
-        </div>
-
-        <p class="lead" style="margin-top:14px">
-          En iPhone la música necesita <b>un toque</b> para activarse. Dale play abajo 💗
+        <p>
+          Para comenzar este pequeño detalle mi amor, espero que te guste. Quiero que sepas que te amo mucho
+          y que estoy muy feliz de tenerte en mi vida.
         </p>
-      </section>
-    </div>
-  </main>
 
-  <!-- PLAYER -->
-  <div class="player" id="player">
-    <button class="play" id="playBtn" aria-label="Reproducir o pausar">▶</button>
-    <div class="meta">
-      <div class="song">UWAIE - Kapo</div>
-      <div class="hint" id="playHint">Toca para reproducir</div>
+        <p>
+          Aunque ahora estemos a distancia, no cambia lo que siento por ti. Al contrario… cada día me enamoro
+          un poquito más.
+        </p>
+
+        <p>
+          Quiero que te diviertas, te relajes y me extrañes mucho mi amor. Te extraño muchísimo 💗
+          y quería que tengas algo bonito para este 14, porque es nuestro primer 14.
+        </p>
+      </div>
+
+      <div class="actions">
+        <a class="btn btn-primary" href="acepto.html">¿Quieres ser mi 14 de febrero? 💘</a>
+        <a class="btn btn-ghost" href="recuerdos.html">Recuerdos 💗</a>
+        <a class="btn btn-ghost" href="cupones.html">Cupones 💗</a>
+        <a class="btn btn-ghost" href="citas.html">Citas ✨</a>
+      </div>
+
+      <p class="small-note">
+        (Tip: en iPhone la música se activa con un toque. Toca el botón abajo para reproducir 🎶)
+      </p>
     </div>
   </div>
-
-  <script src="app.js"></script>
 </body>
 </html>
