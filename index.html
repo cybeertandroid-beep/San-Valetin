@@ -6,57 +6,60 @@
   <title>Para mi persona favorita 💗</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body class="fade-in">
   <div class="bg"></div>
   <div class="hearts"></div>
+  <div class="heart-burst" id="heartBurst"></div>
 
-  <!-- COUNTDOWN (en todas las páginas) -->
-  <aside class="countdown-float" id="countdownFloat" aria-live="polite">
+  <!-- CONTADOR -->
+  <aside class="countdown" id="countdown" aria-live="polite">
     <div class="cd-head">
       <span class="cd-title">Faltan para volver a vernos</span>
-      <span class="cd-heart">💗</span>
+      <span class="cd-heart" aria-hidden="true">💗</span>
     </div>
     <div class="cd-grid">
-      <div class="cd-pill"><span class="cd-n" id="cdDays">--</span><span class="cd-l">DÍAS</span></div>
-      <div class="cd-pill"><span class="cd-n" id="cdHours">--</span><span class="cd-l">HRS</span></div>
-      <div class="cd-pill"><span class="cd-n" id="cdMins">--</span><span class="cd-l">MIN</span></div>
-      <div class="cd-pill"><span class="cd-n" id="cdSecs">--</span><span class="cd-l">SEG</span></div>
+      <div class="cd-cell"><span class="cd-num" id="cdDays">--</span><span class="cd-lab">DÍAS</span></div>
+      <div class="cd-cell"><span class="cd-num" id="cdHours">--</span><span class="cd-lab">HRS</span></div>
+      <div class="cd-cell"><span class="cd-num" id="cdMins">--</span><span class="cd-lab">MIN</span></div>
+      <div class="cd-cell"><span class="cd-num" id="cdSecs">--</span><span class="cd-lab">SEG</span></div>
     </div>
   </aside>
 
-  <audio id="bgm" preload="auto" loop playsinline>
+  <!-- AUDIO -->
+  <audio id="bgm" preload="metadata" loop playsinline>
     <source src="audio/uwaie.mp3" type="audio/mpeg">
   </audio>
 
   <main class="page">
     <div class="container">
       <section class="card hero">
-        <p class="mini">Para ti, mi amor</p>
+        <p class="mini">Para ti, mi amor 💗</p>
         <h1>Lo mejor que me pasó este año…</h1>
         <p class="lead">te hice algo especial. Espero te guste. <b>Hecho con amor</b> 💗</p>
 
-        <div class="row" style="margin-top:14px">
-          <button class="btn primary pulse" id="btnStart">Ver sorpresa ✨</button>
+        <hr class="soft" />
+
+        <div class="btn-row">
+          <a class="btn btn-primary" href="sorpresa.html" id="btnStart">Ver sorpresa ✨</a>
+          <a class="btn btn-ghost" href="recuerdos.html">Ir a recuerdos 💗</a>
         </div>
 
-        <p class="hint">Mi amor, ábrelo con calma y con audífonos 😌</p>
+        <p class="lead" style="margin-top:14px">
+          En iPhone la música necesita <b>un toque</b> para activarse. Dale play abajo 💗
+        </p>
       </section>
     </div>
   </main>
 
-  <!-- Player fijo abajo-derecha -->
-  <div class="player" aria-label="Reproductor">
-    <button class="btn primary" id="playBtn" type="button">▶</button>
-    <small>UWAIE - Kapo</small>
+  <!-- PLAYER -->
+  <div class="player" id="player">
+    <button class="play" id="playBtn" aria-label="Reproducir o pausar">▶</button>
+    <div class="meta">
+      <div class="song">UWAIE - Kapo</div>
+      <div class="hint" id="playHint">Toca para reproducir</div>
+    </div>
   </div>
-
-  <script>
-    // Ir a sorpresa con transición
-    document.getElementById('btnStart').addEventListener('click', ()=>{
-      document.body.classList.add('fade-out');
-      setTimeout(()=> location.href = 'sorpresa.html', 240);
-    });
-  </script>
 
   <script src="app.js"></script>
 </body>
