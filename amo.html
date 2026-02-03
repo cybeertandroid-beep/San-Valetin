@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>5 cosas que amo 💗</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div class="countdown-wrap">
+    <div id="countdown" class="countdown" data-target="2026-04-12T00:00:00-05:00">
+      <div class="countdown-title"><span>Faltan para volver a vernos</span><span>💗</span></div>
+      <div class="countdown-grid">
+        <div class="cd-box"><div id="cd_days" class="cd-num">--</div><div class="cd-lbl">DÍAS</div></div>
+        <div class="cd-box"><div id="cd_hrs"  class="cd-num">--</div><div class="cd-lbl">HRS</div></div>
+        <div class="cd-box"><div id="cd_min"  class="cd-num">--</div><div class="cd-lbl">MIN</div></div>
+        <div class="cd-box"><div id="cd_sec"  class="cd-num">--</div><div class="cd-lbl">SEG</div></div>
+      </div>
+    </div>
+  </div>
+
+  <audio id="bgm" preload="auto" loop playsinline>
+    <source src="audio/uwaie.mp3" type="audio/mpeg">
+  </audio>
+
+  <div id="player" class="player-wrap" aria-label="Reproductor de música">
+    <button id="playerBtn" class="player-btn" aria-label="Toca para reproducir" aria-pressed="false">
+      <span class="icon play"></span>
+    </button>
+    <div class="player-text">Toca para reproducir</div>
+    <button id="playerMini" class="player-mini" aria-label="Minimizar">▾</button>
+  </div>
+
+  <main class="page">
+    <div class="container">
+      <section class="card">
+        <div class="kicker">💗</div>
+        <h1>5 cosas que amo de ti</h1>
+        <p class="subtitle">Pequeñitas… pero para mí gigantes.</p>
+
+        <div class="hr"></div>
+
+        <div class="stack">
+          <div class="item">
+            <h4>1) Tu forma de ser ✨</h4>
+            <p>Me encanta cómo eres… auténtica, bonita, y con esa energía que me calma.</p>
+          </div>
+          <div class="item">
+            <h4>2) Tu sonrisa 💗</h4>
+            <p>Cuando sonríes, de verdad siento que todo está bien.</p>
+          </div>
+          <div class="item">
+            <h4>3) Tu corazón 🤍</h4>
+            <p>Lo noble que eres, lo mucho que das… y cómo haces sentir a la gente.</p>
+          </div>
+          <div class="item">
+            <h4>4) Tu esfuerzo 🌷</h4>
+            <p>Admiro lo fuerte que eres y cómo sigues adelante aunque sea difícil.</p>
+          </div>
+          <div class="item">
+            <h4>5) Que eres tú 💘</h4>
+            <p>No es “una cosa”… es todo. Me haces bien, y te elijo todos los días.</p>
+          </div>
+        </div>
+
+        <div class="actions" style="margin-top:20px;">
+          <a class="btn btn-ghost" href="index.html">Inicio ↩</a>
+          <a class="btn btn-ghost" href="recuerdos.html">Recuerdos 💗</a>
+          <a class="btn btn-ghost" href="citas.html">Citas ✨</a>
+          <a class="btn btn-ghost" href="cupones.html">Cupones 💗</a>
+          <a class="btn btn-primary" data-wa="open" href="#">Abrir WhatsApp 💗</a>
+        </div>
+
+      </section>
+    </div>
+  </main>
+
+  <div id="modal" class="modal" aria-hidden="true">
+    <button id="modalClose" class="modal-close" aria-label="Cerrar">✕</button>
+    <div class="modal-box">
+      <img id="modalImg" class="modal-img" alt="Foto ampliada">
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+</body>
+</html>
