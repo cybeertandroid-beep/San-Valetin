@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <title>Cupones 💗</title>
+
+  <meta name="countdown-to" content="2026-04-12T00:00:00-05:00">
+  <meta name="site-audio" content="audio/uwaie.mp3">
+  <meta name="wa-number" content="51TU_NUMERO_AQUI">
+
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="shared.js"></script>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="kicker">Cupones 💗</div>
+      <h1>Cupones para canjear cuando vuelvas 💗</h1>
+      <p class="subtitle">Elige uno… y yo cumplo 😌💗</p>
+
+      <section class="coupons" id="couponGrid">
+        <!-- Cupón 1 -->
+        <div class="coupon" data-id="c1">
+          <div class="row">
+            <h4>🍝 Cena romántica</h4>
+            <span class="badge">Canjeable</span>
+          </div>
+          <p>Una cena bonita (con postre sí o sí).</p>
+          <div class="row">
+            <label class="check"><input type="checkbox"> Canjeado</label>
+          </div>
+        </div>
+
+        <div class="coupon" data-id="c2">
+          <div class="row">
+            <h4>🍦 Helado + paseo</h4>
+            <span class="badge">Canjeable</span>
+          </div>
+          <p>Helado, caminata, y muchas fotos juntos.</p>
+          <div class="row">
+            <label class="check"><input type="checkbox"> Canjeado</label>
+          </div>
+        </div>
+
+        <div class="coupon" data-id="c3">
+          <div class="row">
+            <h4>🎥 Noche de pelis</h4>
+            <span class="badge">Canjeable</span>
+          </div>
+          <p>Peli, mantita, besitos, y cero estrés.</p>
+          <div class="row">
+            <label class="check"><input type="checkbox"> Canjeado</label>
+          </div>
+        </div>
+
+        <div class="coupon" data-id="c4">
+          <div class="row">
+            <h4>🌹 Cita sorpresa</h4>
+            <span class="badge">Canjeable</span>
+          </div>
+          <p>No te digo cuál… pero te va a encantar.</p>
+          <div class="row">
+            <label class="check"><input type="checkbox"> Canjeado</label>
+          </div>
+        </div>
+
+        <div class="coupon" data-id="c5">
+          <div class="row">
+            <h4>🧸 Día de mimos</h4>
+            <span class="badge">Canjeable</span>
+          </div>
+          <p>Abrazo largo, cariñitos, y consentirte mucho.</p>
+          <div class="row">
+            <label class="check"><input type="checkbox"> Canjeado</label>
+          </div>
+        </div>
+
+        <div class="coupon" data-id="c6">
+          <div class="row">
+            <h4>📸 Sesión de fotos</h4>
+            <span class="badge">Canjeable</span>
+          </div>
+          <p>Una salida solo para tomarnos fotos bonitas.</p>
+          <div class="row">
+            <label class="check"><input type="checkbox"> Canjeado</label>
+          </div>
+        </div>
+      </section>
+
+      <hr class="hr">
+
+      <h2 class="section-title">5 cosas que más amo de ti 💗</h2>
+
+      <div class="letter">
+        <p><b>1.</b> Tu sonrisa… me calma y me alegra todo.</p>
+        <p><b>2.</b> Tu forma de ser: dulce, fuerte y hermosa.</p>
+        <p><b>3.</b> Cómo me haces sentir querido y en paz.</p>
+        <p><b>4.</b> Tu mirada… de verdad me derrite.</p>
+        <p><b>5.</b> Que eres tú: única, real, y mi persona favorita 💗</p>
+      </div>
+
+      <div class="actions">
+        <a class="btn btn-ghost" href="index.html">Inicio ↩</a>
+        <a class="btn btn-ghost" href="recuerdos.html">Recuerdos 💗</a>
+        <a class="btn btn-primary" href="citas.html">Citas ✨</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Guardar canjeados en el celular
+    const KEY = "cupones_canjes_v1";
+    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+
+    document.querySelectorAll(".coupon").forEach(card => {
+      const id = card.getAttribute("data-id");
+      const chk = card.querySelector('input[type="checkbox"]');
+
+      chk.checked = !!saved[id];
+
+      chk.addEventListener("change", () => {
+        saved[id] = chk.checked;
+        localStorage.setItem(KEY, JSON.stringify(saved));
+      });
+    });
+  </script>
+</body>
+</html>
