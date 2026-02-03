@@ -10,21 +10,8 @@
   <div class="bg"></div>
   <div class="hearts"></div>
 
-  <!-- COUNTDOWN (VISIBLE SIEMPRE) -->
-  <aside class="countdown-float" aria-live="polite">
-    <div class="cd-title">Faltan para volver a vernos 💗</div>
-    <div class="cd-grid">
-      <div class="cd-chip"><span class="cd-num" id="cdDays">--</span><span class="cd-lab">DÍAS</span></div>
-      <div class="cd-chip"><span class="cd-num" id="cdHours">--</span><span class="cd-lab">HRS</span></div>
-      <div class="cd-chip"><span class="cd-num" id="cdMins">--</span><span class="cd-lab">MIN</span></div>
-      <div class="cd-chip"><span class="cd-num" id="cdSecs">--</span><span class="cd-lab">SEG</span></div>
-    </div>
-  </aside>
-
-  <audio id="bgm" preload="metadata" loop>
-    <!-- NO renombres: dejo ambas rutas (raíz y /audio) -->
-    <source src="UWAIE%20-%20Kapo%20(Video%20Oficial).mp3" type="audio/mpeg">
-    <source src="audio/UWAIE%20-%20Kapo%20(Video%20Oficial).mp3" type="audio/mpeg">
+  <audio id="bgm" preload="auto" loop>
+    <source src="audio/uwaie.mp3" type="audio/mpeg">
   </audio>
 
   <main class="page">
@@ -35,7 +22,7 @@
         <p class="lead">te hice algo especial. Espero te guste. <b>Hecho con amor</b> 💗</p>
 
         <div class="row" style="margin-top:14px">
-          <button class="btn primary pulse" id="btnStart">Ver sorpresa ✨</button>
+          <button class="btn primary pulse" id="btnStart" type="button">Ver sorpresa ✨</button>
         </div>
 
         <p class="hint">Mi amor, ábrelo con calma y con audífonos 😌</p>
@@ -50,13 +37,16 @@
   </div>
 
   <script>
-    document.getElementById('btnStart').addEventListener('click', ()=>{
+    // Ir a sorpresa con transición (y guardar estado de música)
+    document.getElementById('btnStart').addEventListener('click', async ()=>{
+      if (window.__startBgm) { try { await window.__startBgm(true); } catch(e){} }
+      if (window.__saveBgmState) { try { window.__saveBgmState(); } catch(e){} }
+
       document.body.classList.add('fade-out');
       setTimeout(()=> location.href = 'sorpresa.html', 240);
     });
   </script>
 
-  <script src="countdown.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
