@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <title>Citas ✨</title>
+
+  <meta name="countdown-to" content="2026-04-12T00:00:00-05:00">
+  <meta name="site-audio" content="audio/uwaie.mp3">
+  <meta name="wa-number" content="51TU_NUMERO_AQUI">
+
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="shared.js"></script>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="kicker">Citas ✨</div>
+      <h1>Citas que quiero tener contigo ✨</h1>
+      <p class="subtitle">Para cuando vuelvas… y para toda la vida 💗</p>
+
+      <div class="letter">
+        <h3>🎲 Elige una cita al azar</h3>
+        <p id="pickText" style="font-weight:900; font-size:18px; margin-top:8px;">Toca el botón para elegir 💗</p>
+        <div class="actions" style="justify-content:flex-start;">
+          <button class="btn btn-primary" id="pickBtn" type="button">Elegir cita ✨</button>
+          <a class="btn btn-ghost" data-wa href="#">Decírmelo por WhatsApp 💬</a>
+        </div>
+      </div>
+
+      <h2 class="section-title">Lista de citas (checklist) 💗</h2>
+      <p class="section-sub">Marca las que ya hicimos… y hacemos más 😌</p>
+
+      <div class="letter" id="listBox"></div>
+
+      <div class="actions">
+        <a class="btn btn-ghost" href="index.html">Inicio ↩</a>
+        <a class="btn btn-ghost" href="recuerdos.html">Recuerdos 💗</a>
+        <a class="btn btn-primary" href="cupones.html">Cupones 💗</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ideas = [
+      "Cena romántica + postre 💗",
+      "Helado + caminata de noche 🌙",
+      "Peli en casa con mantita 🎥",
+      "Cita sorpresa (yo la planeo) 🌹",
+      "Fotos juntos en un lugar bonito 📸",
+      "Desayuno juntos un domingo 🥐",
+      "Ir a un mirador y conversar horas ✨",
+      "Noche de juegos (cartas / retos) 🎮",
+      "Café y hablar de nuestros sueños ☕",
+      "Un picnic simple, pero lindo 🧺",
+      "Ir a comprar algo y reírnos juntos 🛍️",
+      "Bailar en casa, aunque sea torpe 💃"
+    ];
+
+    // Random picker
+    const pickBtn = document.getElementById("pickBtn");
+    const pickText = document.getElementById("pickText");
+    pickBtn.addEventListener("click", () => {
+      const x = ideas[Math.floor(Math.random() * ideas.length)];
+      pickText.textContent = x;
+    });
+
+    // Checklist con localStorage
+    const KEY = "citas_check_v1";
+    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    const listBox = document.getElementById("listBox");
+
+    function render(){
+      listBox.innerHTML = ideas.map((t, i) => {
+        const id = "i" + i;
+        const checked = saved[id] ? "checked" : "";
+        return `
+          <label class="check" style="display:flex; justify-content:flex-start; margin:10px 0;">
+            <input type="checkbox" data-id="${id}" ${checked}>
+            <span>${t}</span>
+          </label>
+        `;
+      }).join("");
+    }
+
+    render();
+
+    listBox.addEventListener("change", (e) => {
+      const el = e.target;
+      if (el && el.matches('input[type="checkbox"][data-id]')){
+        saved[el.dataset.id] = el.checked;
+        localStorage.setItem(KEY, JSON.stringify(saved));
+      }
+    });
+  </script>
+</body>
+</html>
