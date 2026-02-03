@@ -2,98 +2,98 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Citas ✨</title>
-
-  <meta name="countdown-to" content="2026-04-12T00:00:00-05:00">
-  <meta name="site-audio" content="audio/uwaie.mp3">
-  <meta name="wa-number" content="51TU_NUMERO_AQUI">
-
-  <link rel="stylesheet" href="shared.css">
-  <link rel="stylesheet" href="styles.css">
-  <script defer src="shared.js"></script>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
-  <div class="wrap">
-    <div class="card">
-      <div class="kicker">Citas ✨</div>
-      <h1>Citas que quiero tener contigo ✨</h1>
-      <p class="subtitle">Para cuando vuelvas… y para toda la vida 💗</p>
 
-      <div class="letter">
-        <h3>🎲 Elige una cita al azar</h3>
-        <p id="pickText" style="font-weight:900; font-size:18px; margin-top:8px;">Toca el botón para elegir 💗</p>
-        <div class="actions" style="justify-content:flex-start;">
-          <button class="btn btn-primary" id="pickBtn" type="button">Elegir cita ✨</button>
-          <a class="btn btn-ghost" data-wa href="#">Decírmelo por WhatsApp 💬</a>
-        </div>
+  <div class="countdown-wrap">
+    <div id="countdown" class="countdown" data-target="2026-04-12T00:00:00-05:00">
+      <div class="countdown-title">
+        <span>Faltan para volver a vernos</span><span>💗</span>
       </div>
-
-      <h2 class="section-title">Lista de citas (checklist) 💗</h2>
-      <p class="section-sub">Marca las que ya hicimos… y hacemos más 😌</p>
-
-      <div class="letter" id="listBox"></div>
-
-      <div class="actions">
-        <a class="btn btn-ghost" href="index.html">Inicio ↩</a>
-        <a class="btn btn-ghost" href="recuerdos.html">Recuerdos 💗</a>
-        <a class="btn btn-primary" href="cupones.html">Cupones 💗</a>
+      <div class="countdown-grid">
+        <div class="cd-box"><div id="cd_days" class="cd-num">--</div><div class="cd-lbl">DÍAS</div></div>
+        <div class="cd-box"><div id="cd_hrs"  class="cd-num">--</div><div class="cd-lbl">HRS</div></div>
+        <div class="cd-box"><div id="cd_min"  class="cd-num">--</div><div class="cd-lbl">MIN</div></div>
+        <div class="cd-box"><div id="cd_sec"  class="cd-num">--</div><div class="cd-lbl">SEG</div></div>
       </div>
     </div>
   </div>
 
-  <script>
-    const ideas = [
-      "Cena romántica 💗",
-      "Helado + caminata de noche 🌙",
-      "Peli en airbnb 🎥",
-      "Cita sorpresa (yo la planeo) 🌹",
-      "Fotos juntos en un lugar bonito 📸",
-      "Desayuno juntos 🥐",
-      "Ir a la playa de noche ✨",
-      "Noche de juegos 🎮",
-      "Chocolate Caliente y hablar de nuestro futuro ☕",
-      "Un picnic simple, pero lindo 🧺",
-      "Comprar todos los capibara y completar la familia 🛍️ "
-    ];
+  <audio id="bgm" preload="auto" loop playsinline>
+    <source src="audio/uwaie.mp3" type="audio/mpeg">
+  </audio>
 
-    // Random picker
-    const pickBtn = document.getElementById("pickBtn");
-    const pickText = document.getElementById("pickText");
-    pickBtn.addEventListener("click", () => {
-      const x = ideas[Math.floor(Math.random() * ideas.length)];
-      pickText.textContent = x;
-    });
+  <div id="player" class="player-wrap" aria-label="Reproductor de música">
+    <button id="playerBtn" class="player-btn" aria-label="Toca para reproducir" aria-pressed="false">
+      <span class="icon play"></span>
+    </button>
+    <div class="player-text">Toca para reproducir</div>
+    <button id="playerMini" class="player-mini" aria-label="Minimizar">▾</button>
+  </div>
 
-    // Checklist con localStorage
-    const KEY = "citas_check_v1";
-    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
-    const listBox = document.getElementById("listBox");
+  <main class="page">
+    <div class="container">
+      <section class="card">
+        <div class="kicker">Citas ✨</div>
+        <h1>Citas que quiero tener contigo ✨</h1>
+        <p class="subtitle">Para cuando vuelvas… y para toda la vida 💗</p>
 
-    function render(){
-      listBox.innerHTML = ideas.map((t, i) => {
-        const id = "i" + i;
-        const checked = saved[id] ? "checked" : "";
-        return `
-          <label class="check" style="display:flex; justify-content:flex-start; margin:10px 0;">
-            <input type="checkbox" data-id="${id}" ${checked}>
-            <span>${t}</span>
-          </label>
-        `;
-      }).join("");
-    }
+        <div class="hr"></div>
 
-    render();
+        <div class="item">
+          <h4>🎲 Elige una cita al azar</h4>
+          <p>Presiona el botón y te sale una idea.</p>
 
-    listBox.addEventListener("change", (e) => {
-      const el = e.target;
-      if (el && el.matches('input[type="checkbox"][data-id]')){
-        saved[el.dataset.id] = el.checked;
-        localStorage.setItem(KEY, JSON.stringify(saved));
-      }
-    });
-  </script>
+          <div class="actions" style="margin-top:12px;">
+            <button id="pickDateBtn" class="btn btn-primary btn-small">Elegir cita ✨</button>
+            <a class="btn btn-ghost btn-small" data-wa="open" href="#">Abrir WhatsApp 💬</a>
+          </div>
+
+          <div class="pill" style="margin-top:12px;">
+            <span>💗</span>
+            <span id="pickDateOut">Toca “Elegir cita”</span>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="section-title">Lista de citas (checklist) 💗</div>
+        <p class="section-sub">Marca las que ya hicimos… y hacemos más 😌</p>
+
+        <div id="datesList" class="stack" data-store="datesChecklist">
+          <div class="item check"><input id="d1" type="checkbox"><label for="d1">Cena romántica + postre 💗</label></div>
+          <div class="item check"><input id="d2" type="checkbox"><label for="d2">Helado + caminata de noche 🌙</label></div>
+          <div class="item check"><input id="d3" type="checkbox"><label for="d3">Peli en casa con mantita 🎬</label></div>
+          <div class="item check"><input id="d4" type="checkbox"><label for="d4">Cita sorpresa (yo la planeo) 🌹</label></div>
+          <div class="item check"><input id="d5" type="checkbox"><label for="d5">Fotos juntos en un lugar bonito 📸</label></div>
+          <div class="item check"><input id="d6" type="checkbox"><label for="d6">Desayuno juntos un domingo 🥐</label></div>
+          <div class="item check"><input id="d7" type="checkbox"><label for="d7">Ir a un mirador y conversar horas ✨</label></div>
+          <div class="item check"><input id="d8" type="checkbox"><label for="d8">Noche de juegos (cartas/retos) 🎮</label></div>
+          <div class="item check"><input id="d9" type="checkbox"><label for="d9">Café y hablar de nuestros sueños ☕</label></div>
+          <div class="item check"><input id="d10" type="checkbox"><label for="d10">Picnic simple, pero lindo 🧺</label></div>
+        </div>
+
+        <div class="actions" style="margin-top:20px;">
+          <a class="btn btn-ghost" href="index.html">Inicio ↩</a>
+          <a class="btn btn-ghost" href="recuerdos.html">Recuerdos 💗</a>
+          <a class="btn btn-ghost" href="cupones.html">Cupones 💗</a>
+          <a class="btn btn-ghost" href="amo.html">5 cosas que amo 💗</a>
+        </div>
+
+      </section>
+    </div>
+  </main>
+
+  <div id="modal" class="modal" aria-hidden="true">
+    <button id="modalClose" class="modal-close" aria-label="Cerrar">✕</button>
+    <div class="modal-box">
+      <img id="modalImg" class="modal-img" alt="Foto ampliada">
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
 </body>
 </html>
