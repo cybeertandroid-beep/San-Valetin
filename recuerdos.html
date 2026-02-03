@@ -11,10 +11,11 @@
   <div class="hearts"></div>
 
   <audio id="bgm" preload="auto" loop>
-    <source src="UWAIE - Kapo (Video Oficial).mp3" type="audio/mpeg">
+    <source src="UWAIE%20-%20Kapo%20(Video%20Oficial).mp3" type="audio/mpeg">
+    <source src="audio/UWAIE%20-%20Kapo%20(Video%20Oficial).mp3" type="audio/mpeg">
   </audio>
 
-  <!-- COUNTDOWN: SOLO UNO (dock grande fijo) -->
+  <!-- COUNTDOWN: dock grande fijo -->
   <aside class="countdown-dock" id="countdownDock" aria-live="polite">
     <div class="cd-title">Faltan para volver a vernos, mi amor ✨</div>
     <div class="cd-clock-grid">
@@ -49,8 +50,6 @@
 
         <div class="section-title">Más momentos 📱 (WhatsApp)</div>
         <div class="gallery">
-          <!-- OJO: aquí van URL-ENCODED automáticamente por app.js en el modal,
-               pero el src igual debe estar bien: usa %20 para espacios -->
           <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.11.17%20AM.jpeg" alt="WhatsApp 1">
           <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.16.44%20AM.jpeg" alt="WhatsApp 2">
           <img class="photo" src="fotos/WhatsApp%20Image%202026-01-29%20at%202.22.03%20AM.jpeg" alt="WhatsApp 3">
@@ -88,6 +87,7 @@
     document.getElementById('backInicio').addEventListener('click', ()=> pageGo('index.html'));
   </script>
 
+  <script src="countdown.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
