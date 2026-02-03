@@ -2,20 +2,13 @@
   const meta = (name, fallback="") =>
     document.querySelector(`meta[name="${name}"]`)?.content?.trim() || fallback;
 
-  // ✅ Ajusta esto con tu fecha real (puedes cambiarlo desde el <meta>)
   const COUNTDOWN_TO = meta("countdown-to", "2026-04-12T00:00:00-05:00");
-
-  // ✅ Audio (recomendado: ruta que funcione en TODAS las páginas)
-  // Si tus páginas están en carpetas distintas, usa una ruta absoluta del proyecto:
-  // ejemplo: "/San-Valetin/audio/uwaie.mp3"
   const AUDIO_SRC = meta("site-audio", "audio/uwaie.mp3");
+  const WA_NUMBER = meta("wa-number", "51999999999"); // cambia aquí o en <meta>
 
-  // ✅ WhatsApp sin mensaje (solo abre chat)
-  const WA_NUMBER = meta("wa-number", "51999999999"); // pon tu número real con código país
-
-  // -----------------------------
-  // Crear TOPBAR (contador) en TODAS
-  // -----------------------------
+  // =========================
+  // TOPBAR (contador) en TODAS
+  // =========================
   const topbar = document.createElement("div");
   topbar.id = "topbar";
   topbar.innerHTML = `
@@ -34,7 +27,6 @@
   `;
   document.body.appendChild(topbar);
 
-  // Reservar espacio arriba para que NO tape títulos (especialmente en móvil)
   const setTopSpace = () => {
     const h = topbar.getBoundingClientRect().height;
     document.documentElement.style.setProperty("--topbar-space", `${h + 12}px`);
@@ -70,10 +62,9 @@
   tick();
   setInterval(tick, 1000);
 
-  // -----------------------------
-  // AUDIO (iOS NO permite autoplay)
-  // -> Solo se reproduce con un toque real del usuario.
-  // -----------------------------
+  // =========================
+  // AUDIO: iPhone requiere toque (sin autoplay)
+  // =========================
   let audio = document.getElementById("bgm");
   if (!audio){
     audio = document.createElement("audio");
@@ -85,34 +76,27 @@
   }
   audio.src = AUDIO_SRC;
 
-  // Player dock abajo
+  // Player abajo (mini)
   const dock = document.createElement("div");
   dock.id = "playerDock";
   dock.innerHTML = `
     <div class="player-pill">
       <button class="player-btn" id="plBtn" aria-label="Reproducir/Pausar">▶</button>
-      <div class="player-text" id="plText">Toca para reproducir</div>
+      <div class="player-text">Toca para reproducir</div>
     </div>
   `;
   document.body.appendChild(dock);
 
   const plBtn = dock.querySelector("#plBtn");
-  const plText = dock.querySelector("#plText");
 
   function ui(){
-    const playing = !audio.paused;
-    plBtn.textContent = playing ? "⏸" : "▶";
-    plText.textContent = playing ? "Reproduciendo" : "Toca para reproducir";
+    plBtn.textContent = audio.paused ? "▶" : "⏸";
   }
   ui();
 
   async function tryPlay(){
     audio.muted = false;
-    try{
-      await audio.play();
-    }catch(e){
-      // iOS: si no fue gesto del usuario, fallará. Por eso dejamos el botón abajo.
-    }
+    try{ await audio.play(); }catch(e){ /* iOS: solo con gesto */ }
     ui();
   }
 
@@ -123,7 +107,7 @@
     ui();
   });
 
-  // “Primer toque” en cualquier parte también puede iniciar (si ella toca la página)
+  // Primer toque en la página también puede iniciar audio
   const firstGesture = async () => {
     if (audio.paused) await tryPlay();
     document.removeEventListener("touchstart", firstGesture);
@@ -135,19 +119,18 @@
   audio.addEventListener("play", ui);
   audio.addEventListener("pause", ui);
 
-  // -----------------------------
-  // WhatsApp: que NO escriba mensaje automático
-  // -----------------------------
+  // =========================
+  // WhatsApp sin mensaje automático
+  // =========================
   document.querySelectorAll("[data-wa]").forEach(a => {
     a.setAttribute("href", `https://wa.me/${WA_NUMBER}`);
     a.setAttribute("target", "_blank");
     a.setAttribute("rel", "noopener");
   });
 
-  // -----------------------------
-  // LIGHTBOX PRO: envuelve tus fotos en .gallery
-  // y listo: el modal queda centrado + X fija.
-  // -----------------------------
+  // =========================
+  // Lightbox pro para .gallery img
+  // =========================
   let lb = document.getElementById("lightbox");
   if (!lb){
     lb = document.createElement("div");
@@ -176,11 +159,8 @@
   }
 
   lbClose.addEventListener("click", closeLB);
-  lb.addEventListener("click", (e) => {
-    if (e.target === lb) closeLB();
-  });
+  lb.addEventListener("click", (e) => { if (e.target === lb) closeLB(); });
 
-  // Se activa SOLO para imágenes dentro de .gallery (para no afectar iconos)
   document.querySelectorAll(".gallery img").forEach(img => {
     img.style.cursor = "zoom-in";
     img.addEventListener("click", () => {
