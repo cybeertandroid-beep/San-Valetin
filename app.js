@@ -12,6 +12,7 @@
     const cd = $("#countdownDock");
     const pd = $("#playerDock");
 
+    // Alturas reales (con un poquito de margen)
     const top = cd ? cd.getBoundingClientRect().height + 26 : 40;
     const bottom = pd ? pd.getBoundingClientRect().height + 26 : 40;
 
@@ -54,7 +55,7 @@
     for (let i = 0; i < 6; i++) setTimeout(spawn, i * 250);
   }
 
-  // ---------- Lightbox (X siempre visible + no se descuadra) ----------
+  // ---------- Lightbox (X siempre visible + clickeable) ----------
   function initLightbox() {
     let lb = $("#lightbox");
     if (!lb) {
@@ -77,18 +78,41 @@
       lb.classList.add("open");
       document.body.style.overflow = "hidden";
     }
+
     function close() {
       lb.classList.remove("open");
       imgEl.src = "";
       document.body.style.overflow = "";
     }
 
-    closeBtn.addEventListener("click", close);
+    // X cierra (click + touch) -> FIX móvil
+    closeBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      close();
+    });
+
+    closeBtn.addEventListener(
+      "touchstart",
+      (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        close();
+      },
+      { passive: false }
+    );
+
+    // Click fuera (solo si clickeas el fondo)
     lb.addEventListener("click", (e) => {
       if (e.target === lb) close();
     });
 
-    // activa en todas las imágenes dentro de .photo
+    // Escape cierra (desktop)
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && lb.classList.contains("open")) close();
+    });
+
+    // Activa en todas las imágenes dentro de .photo
     $$(".photo img").forEach((img) => {
       img.addEventListener("click", () => open(img.src));
     });
@@ -109,6 +133,7 @@
       return {};
     }
   }
+
   function saveState(patch) {
     const cur = loadState();
     const next = { ...cur, ...patch, ts: Date.now() };
@@ -116,54 +141,35 @@
     return next;
   }
 
-  function waitForPlayable(audio, timeoutMs = 4500) {
-    return new Promise((resolve, reject) => {
-      let done = false;
-      const t = setTimeout(() => {
-        if (done) return;
-        done = true;
-        cleanup();
-        reject(new Error("timeout"));
-      }, timeoutMs);
+  // Intenta sources en orden, esperando loadedmetadata o error
+  function trySource(audio, src) {
+    return new Promise((resolve) => {
+      const onOk = () => cleanup(true);
+      const onErr = () => cleanup(false);
 
-      const onOk = () => {
-        if (done) return;
-        done = true;
-        cleanup();
-        resolve(true);
-      };
-      const onErr = () => {
-        if (done) return;
-        done = true;
-        cleanup();
-        reject(new Error("error"));
-      };
-
-      function cleanup() {
-        clearTimeout(t);
-        audio.removeEventListener("canplay", onOk);
+      const cleanup = (ok) => {
         audio.removeEventListener("loadedmetadata", onOk);
+        audio.removeEventListener("canplay", onOk);
         audio.removeEventListener("error", onErr);
-      }
+        resolve(ok);
+      };
 
-      audio.addEventListener("canplay", onOk, { once: true });
       audio.addEventListener("loadedmetadata", onOk, { once: true });
+      audio.addEventListener("canplay", onOk, { once: true });
       audio.addEventListener("error", onErr, { once: true });
+
+      audio.src = src;
+      audio.load();
+      // fallback por si ningún evento dispara (raro)
+      setTimeout(() => resolve(true), 900);
     });
   }
 
   async function pickFirstWorkingSource(audio, sources) {
     for (const src of sources) {
-      try {
-        audio.src = src;
-        audio.load();
-        await waitForPlayable(audio);
-        return src;
-      } catch {
-        // try next
-      }
+      const ok = await trySource(audio, src);
+      if (ok) return src;
     }
-    // fallback igual
     audio.src = sources[0];
     audio.load();
     return sources[0];
@@ -216,6 +222,7 @@
     const btnPrev = dock.querySelector('[data-act="prev"]');
     const btnNext = dock.querySelector('[data-act="next"]');
     const btnExpand = dock.querySelector('[data-act="expand"]');
+
     const seek = $("#seek", dock);
     const tcur = $("#tcur", dock);
     const tdur = $("#tdur", dock);
@@ -226,10 +233,14 @@
     audio.preload = "metadata";
     audio.loop = false;
 
-    trackRow.innerHTML = TRACKS.map((t, i) => `<button class="track" type="button" data-i="${i}">${t.label}</button>`).join("");
+    trackRow.innerHTML = TRACKS.map(
+      (t, i) => `<button class="track" type="button" data-i="${i}">${t.label}</button>`
+    ).join("");
 
     function setActiveChip(i) {
-      $$(".track", trackRow).forEach((b) => b.classList.toggle("active", Number(b.dataset.i) === i));
+      $$(".track", trackRow).forEach((b) =>
+        b.classList.toggle("active", Number(b.dataset.i) === i)
+      );
     }
 
     let st = loadState();
@@ -245,15 +256,14 @@
       const tr = TRACKS[index];
       await pickFirstWorkingSource(audio, tr.sources);
 
-      const onMeta = () => {
+      audio.onloadedmetadata = () => {
         if (!keepTime) restoredTime = 0;
-        const safe = clamp(restoredTime, 0, audio.duration || restoredTime);
+        const safe = clamp(restoredTime, 0, audio.duration || restoredTime || 0);
         audio.currentTime = isFinite(safe) ? safe : 0;
         tdur.textContent = fmtTime(audio.duration);
         saveState({ index, time: audio.currentTime });
       };
 
-      audio.onloadedmetadata = onMeta;
       saveState({ index });
     }
 
@@ -271,6 +281,7 @@
     }
 
     let seeking = false;
+
     seek.addEventListener("input", () => {
       seeking = true;
       const dur = audio.duration || 0;
@@ -278,6 +289,7 @@
       const target = (Number(seek.value) / 1000) * dur;
       tcur.textContent = fmtTime(target);
     });
+
     seek.addEventListener("change", () => {
       const dur = audio.duration || 0;
       if (!dur) {
@@ -300,6 +312,7 @@
         setPlayIcon();
       }
     }
+
     function pause() {
       audio.pause();
       setPlayIcon();
@@ -315,16 +328,16 @@
       const next = (index - 1 + TRACKS.length) % TRACKS.length;
       restoredTime = 0;
       await setTrack(next, false);
-      if (!audio.paused) await play();
-      else setPlayIcon();
+      if (wasPlaying && !audio.paused) await play();
+      setPlayIcon();
     });
 
     btnNext.addEventListener("click", async () => {
       const next = (index + 1) % TRACKS.length;
       restoredTime = 0;
       await setTrack(next, false);
-      if (!audio.paused) await play();
-      else setPlayIcon();
+      if (wasPlaying && !audio.paused) await play();
+      setPlayIcon();
     });
 
     btnExpand.addEventListener("click", () => {
@@ -337,10 +350,9 @@
       const b = e.target.closest(".track");
       if (!b) return;
       restoredTime = 0;
-      const was = !audio.paused;
       await setTrack(Number(b.dataset.i), false);
-      if (was) await play();
-      else setPlayIcon();
+      if (!audio.paused) await play();
+      setPlayIcon();
     });
 
     audio.addEventListener("timeupdate", () => {
@@ -362,18 +374,21 @@
         playing: !audio.paused,
       });
     }
+
     window.addEventListener("pagehide", persistNow);
     window.addEventListener("beforeunload", persistNow);
 
-    $$('a[href*=".html"]').forEach((a) => {
+    // Guardar si navegas a otra página interna
+    $$('a[href$=".html"]').forEach((a) => {
       a.addEventListener("click", () => persistNow(), { capture: true });
     });
 
+    // Init
     setActiveChip(index);
     setTrack(index, true).then(async () => {
       setPlayIcon();
       updateSeek();
-      setTimeout(updateDockOffsets, 120);
+      setTimeout(updateDockOffsets, 80);
 
       if (wasPlaying) {
         restoredTime = Number(loadState().time || 0);
@@ -394,15 +409,14 @@
 
     let noCount = 0;
 
-    yes.addEventListener("click", () => {
-      ok.classList.add("show");
-      msg.classList.remove("show");
+    yes?.addEventListener("click", () => {
+      ok?.classList.add("show");
+      msg?.classList.remove("show");
 
       for (let i = 0; i < 20; i++) {
         setTimeout(() => {
           const layer = document.getElementById("heartsLayer");
           if (!layer) return;
-
           const h = document.createElement("div");
           h.className = "heart";
           h.textContent = ["💗", "💖", "💘", "💞", "💕"][Math.floor(Math.random() * 5)];
@@ -411,7 +425,6 @@
           h.style.bottom = `20vh`;
           h.style.animationDuration = `${5 + Math.random() * 3}s`;
           h.style.opacity = `${0.22 + Math.random() * 0.2}`;
-
           layer.appendChild(h);
           setTimeout(() => h.remove(), 9000);
         }, i * 40);
@@ -420,17 +433,22 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
-    no.addEventListener("click", () => {
+    no?.addEventListener("click", () => {
       noCount++;
-      msg.classList.add("show");
-      ok.classList.remove("show");
+      msg?.classList.add("show");
+      ok?.classList.remove("show");
 
-      const phrases = ["mmm… piénsalo otra vez 😌", "yo sé que quieres 😳", "no me rompas el corazoncito 🥺", "última oportunidad… 💗"];
+      const phrases = [
+        "mmm… piénsalo otra vez 😌",
+        "yo sé que quieres 😳",
+        "no me rompas el corazoncito 🥺",
+        "última oportunidad… 💗",
+      ];
       no.textContent = phrases[Math.min(noCount - 1, phrases.length - 1)];
     });
   }
 
-  // ---------- LocalStorage checklist for citas / cupones ----------
+  // ---------- LocalStorage checklist ----------
   function initChecklist(storageKey) {
     const inputs = $$(`[data-store="${storageKey}"] input[type="checkbox"]`);
     if (!inputs.length) return;
@@ -451,7 +469,7 @@
     });
   }
 
-  // ---------- Random for citas / cupones ----------
+  // ---------- Random pick ----------
   function initRandomPick(btnId, outId, items) {
     const btn = document.getElementById(btnId);
     const out = document.getElementById(outId);
@@ -460,7 +478,7 @@
     btn.addEventListener("click", () => {
       const pick = items[Math.floor(Math.random() * items.length)];
       out.textContent = pick;
-      out.parentElement.classList.add("show");
+      out.parentElement?.classList.add("show");
     });
   }
 
@@ -495,6 +513,6 @@
       "Cupón: Un día de mimos solo para ti 🧸",
     ]);
 
-    setTimeout(updateDockOffsets, 160);
+    setTimeout(updateDockOffsets, 120);
   });
 })();
