@@ -3,16 +3,18 @@
   window.__SV_APP_INITED = true;
 
   // ---------- Helpers ----------
-  const $ = (s, r=document) => r.querySelector(s);
-  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
   // ---------- Layout offsets (no tapar contenido) ----------
-  function updateDockOffsets(){
+  function updateDockOffsets() {
     const cd = $("#countdownDock");
     const pd = $("#playerDock");
+
     const top = cd ? cd.getBoundingClientRect().height + 26 : 40;
     const bottom = pd ? pd.getBoundingClientRect().height + 26 : 40;
+
     document.documentElement.style.setProperty("--topDock", `${Math.ceil(top)}px`);
     document.documentElement.style.setProperty("--bottomDock", `${Math.ceil(bottom)}px`);
   }
@@ -22,39 +24,40 @@
   document.addEventListener("DOMContentLoaded", () => setTimeout(updateDockOffsets, 60));
 
   // ---------- Hearts (se ven en celular) ----------
-  function initHearts(){
+  function initHearts() {
     let layer = $("#heartsLayer");
-    if (!layer){
+    if (!layer) {
       layer = document.createElement("div");
       layer.id = "heartsLayer";
       document.body.appendChild(layer);
     }
 
-    const heartChars = ["💗","💖","💘","💞","💕"];
-    function spawn(){
+    const heartChars = ["💗", "💖", "💘", "💞", "💕"];
+
+    function spawn() {
       const h = document.createElement("div");
       h.className = "heart";
-      h.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
-      const size = 16 + Math.random()*18;
-      h.style.fontSize = `${size}px`;
-      h.style.left = `${Math.random()*100}vw`;
-      h.style.bottom = `-30px`;
-      h.style.animationDuration = `${8 + Math.random()*6}s`;
-      h.style.opacity = `${0.12 + Math.random()*0.16}`;
-      layer.appendChild(h);
+      h.textContent = heartChars[Math.floor(Math.random() * heartChars.length)];
 
+      const size = 16 + Math.random() * 18;
+      h.style.fontSize = `${size}px`;
+      h.style.left = `${Math.random() * 100}vw`;
+      h.style.bottom = `-30px`;
+      h.style.animationDuration = `${8 + Math.random() * 6}s`;
+      h.style.opacity = `${0.12 + Math.random() * 0.16}`;
+
+      layer.appendChild(h);
       setTimeout(() => h.remove(), 16000);
     }
 
-    // densidad suave (no molesta)
     setInterval(spawn, 900);
-    for(let i=0;i<6;i++) setTimeout(spawn, i*250);
+    for (let i = 0; i < 6; i++) setTimeout(spawn, i * 250);
   }
 
   // ---------- Lightbox (X siempre visible + no se descuadra) ----------
-  function initLightbox(){
+  function initLightbox() {
     let lb = $("#lightbox");
-    if (!lb){
+    if (!lb) {
       lb = document.createElement("div");
       lb.id = "lightbox";
       lb.innerHTML = `
@@ -69,12 +72,12 @@
     const closeBtn = $(".lb-close", lb);
     const imgEl = $(".lb-img", lb);
 
-    function open(src){
+    function open(src) {
       imgEl.src = src;
       lb.classList.add("open");
       document.body.style.overflow = "hidden";
     }
-    function close(){
+    function close() {
       lb.classList.remove("open");
       imgEl.src = "";
       document.body.style.overflow = "";
@@ -86,7 +89,7 @@
     });
 
     // activa en todas las imágenes dentro de .photo
-    $$(".photo img").forEach(img => {
+    $$(".photo img").forEach((img) => {
       img.addEventListener("click", () => open(img.src));
     });
   }
@@ -94,53 +97,93 @@
   // ---------- Player (persistente + playlist + seek) ----------
   const STORAGE = "sv_player_state_v3";
   const TRACKS = [
-    { id:"uwaie", label:"UWAIE", sources:["audio/uwaie.mp3","uwaie.mp3"] },
-    { id:"mi_refe", label:"Mi refe", sources:["audio/Mi-refe.mp3","Mi-refe.mp3"] },
-    { id:"mas_que_tu", label:"Más que tú", sources:["audio/mas-que-tu.mp3","mas-que-tu.mp3"] },
+    { id: "uwaie", label: "UWAIE", sources: ["audio/uwaie.mp3", "uwaie.mp3"] },
+    { id: "mi_refe", label: "Mi refe", sources: ["audio/Mi-refe.mp3", "Mi-refe.mp3"] },
+    { id: "mas_que_tu", label: "Más que tú", sources: ["audio/mas-que-tu.mp3", "mas-que-tu.mp3"] },
   ];
 
-  function loadState(){
-    try{
+  function loadState() {
+    try {
       return JSON.parse(localStorage.getItem(STORAGE) || "{}");
-    }catch{ return {}; }
+    } catch {
+      return {};
+    }
   }
-  function saveState(patch){
+  function saveState(patch) {
     const cur = loadState();
     const next = { ...cur, ...patch, ts: Date.now() };
     localStorage.setItem(STORAGE, JSON.stringify(next));
     return next;
   }
 
-  async function pickFirstWorkingSource(audio, sources){
-    // Intenta en orden; si falla, pasa al siguiente.
-    for (const src of sources){
-      try{
+  function waitForPlayable(audio, timeoutMs = 4500) {
+    return new Promise((resolve, reject) => {
+      let done = false;
+      const t = setTimeout(() => {
+        if (done) return;
+        done = true;
+        cleanup();
+        reject(new Error("timeout"));
+      }, timeoutMs);
+
+      const onOk = () => {
+        if (done) return;
+        done = true;
+        cleanup();
+        resolve(true);
+      };
+      const onErr = () => {
+        if (done) return;
+        done = true;
+        cleanup();
+        reject(new Error("error"));
+      };
+
+      function cleanup() {
+        clearTimeout(t);
+        audio.removeEventListener("canplay", onOk);
+        audio.removeEventListener("loadedmetadata", onOk);
+        audio.removeEventListener("error", onErr);
+      }
+
+      audio.addEventListener("canplay", onOk, { once: true });
+      audio.addEventListener("loadedmetadata", onOk, { once: true });
+      audio.addEventListener("error", onErr, { once: true });
+    });
+  }
+
+  async function pickFirstWorkingSource(audio, sources) {
+    for (const src of sources) {
+      try {
         audio.src = src;
-        await audio.load();
+        audio.load();
+        await waitForPlayable(audio);
         return src;
-      }catch{}
+      } catch {
+        // try next
+      }
     }
-    // deja el primero igual
+    // fallback igual
     audio.src = sources[0];
+    audio.load();
     return sources[0];
   }
 
-  function fmtTime(t){
+  function fmtTime(t) {
     if (!isFinite(t) || t < 0) return "0:00";
-    const m = Math.floor(t/60);
-    const s = Math.floor(t%60);
-    return `${m}:${String(s).padStart(2,"0")}`;
+    const m = Math.floor(t / 60);
+    const s = Math.floor(t % 60);
+    return `${m}:${String(s).padStart(2, "0")}`;
   }
 
-  function initPlayer(){
+  function initPlayer() {
     let dock = $("#playerDock");
-    if (!dock){
+    if (!dock) {
       dock = document.createElement("div");
       dock.id = "playerDock";
       document.body.appendChild(dock);
     }
 
-    // UI
     dock.innerHTML = `
       <div class="player-bar">
         <button class="pbtn" type="button" data-act="toggle" aria-label="Reproducir o pausar">▶</button>
@@ -166,6 +209,7 @@
         <div class="trackRow" id="trackRow"></div>
       </div>
     `;
+
     setTimeout(updateDockOffsets, 0);
 
     const btnToggle = dock.querySelector('[data-act="toggle"]');
@@ -178,91 +222,88 @@
     const psub = $("#psub", dock);
     const trackRow = $("#trackRow", dock);
 
-    // Audio element
     const audio = new Audio();
     audio.preload = "metadata";
     audio.loop = false;
 
-    // Build track chips
-    trackRow.innerHTML = TRACKS.map((t,i)=>(
-      `<button class="track" type="button" data-i="${i}">${t.label}</button>`
-    )).join("");
+    trackRow.innerHTML = TRACKS.map((t, i) => `<button class="track" type="button" data-i="${i}">${t.label}</button>`).join("");
 
-    function setActiveChip(i){
-      $$(".track", trackRow).forEach(b => b.classList.toggle("active", Number(b.dataset.i) === i));
+    function setActiveChip(i) {
+      $$(".track", trackRow).forEach((b) => b.classList.toggle("active", Number(b.dataset.i) === i));
     }
 
     let st = loadState();
-    let index = clamp(Number(st.index ?? 0), 0, TRACKS.length-1);
+    let index = clamp(Number(st.index ?? 0), 0, TRACKS.length - 1);
     let wasPlaying = Boolean(st.playing);
     let restoredTime = Number(st.time ?? 0);
 
-    async function setTrack(i, keepTime=false){
-      index = clamp(i, 0, TRACKS.length-1);
+    async function setTrack(i, keepTime = false) {
+      index = clamp(i, 0, TRACKS.length - 1);
       setActiveChip(index);
-      psub.textContent = `Música • ${index+1}/${TRACKS.length}`;
+      psub.textContent = `Música • ${index + 1}/${TRACKS.length}`;
 
       const tr = TRACKS[index];
       await pickFirstWorkingSource(audio, tr.sources);
 
-      audio.onloadedmetadata = () => {
+      const onMeta = () => {
         if (!keepTime) restoredTime = 0;
-        const safe = clamp(restoredTime, 0, (audio.duration || restoredTime));
+        const safe = clamp(restoredTime, 0, audio.duration || restoredTime);
         audio.currentTime = isFinite(safe) ? safe : 0;
         tdur.textContent = fmtTime(audio.duration);
         saveState({ index, time: audio.currentTime });
       };
 
+      audio.onloadedmetadata = onMeta;
       saveState({ index });
     }
 
-    function setPlayIcon(){
+    function setPlayIcon() {
       btnToggle.textContent = audio.paused ? "▶" : "❚❚";
     }
 
-    function updateSeek(){
+    function updateSeek() {
       const dur = audio.duration || 0;
       const cur = audio.currentTime || 0;
       tcur.textContent = fmtTime(cur);
       tdur.textContent = fmtTime(dur);
-      const val = dur ? Math.floor((cur/dur)*1000) : 0;
+      const val = dur ? Math.floor((cur / dur) * 1000) : 0;
       seek.value = String(val);
     }
 
-    // Seek interaction
     let seeking = false;
     seek.addEventListener("input", () => {
       seeking = true;
       const dur = audio.duration || 0;
       if (!dur) return;
-      const target = (Number(seek.value)/1000) * dur;
+      const target = (Number(seek.value) / 1000) * dur;
       tcur.textContent = fmtTime(target);
     });
     seek.addEventListener("change", () => {
       const dur = audio.duration || 0;
-      if (!dur) { seeking = false; return; }
-      const target = (Number(seek.value)/1000) * dur;
+      if (!dur) {
+        seeking = false;
+        return;
+      }
+      const target = (Number(seek.value) / 1000) * dur;
       audio.currentTime = clamp(target, 0, dur);
       saveState({ time: audio.currentTime });
       seeking = false;
     });
 
-    // Controls
-    async function play(){
-      try{
+    async function play() {
+      try {
         await audio.play();
         setPlayIcon();
-        saveState({ playing:true });
-      }catch(e){
-        // iOS puede bloquear autoplay: quedará listo, usuario toca play
-        saveState({ playing:false });
+        saveState({ playing: true });
+      } catch {
+        saveState({ playing: false });
         setPlayIcon();
       }
     }
-    function pause(){
+    function pause() {
       audio.pause();
       setPlayIcon();
-      saveState({ playing:false, time: audio.currentTime || 0 });
+      saveState({ playing: false, time: audio.currentTime || 0 });
     }
 
     btnToggle.addEventListener("click", async () => {
@@ -292,66 +333,57 @@
       setTimeout(updateDockOffsets, 60);
     });
 
-    // Track chips
     trackRow.addEventListener("click", async (e) => {
       const b = e.target.closest(".track");
       if (!b) return;
       restoredTime = 0;
+      const was = !audio.paused;
       await setTrack(Number(b.dataset.i), false);
-      // si estaba sonando, sigue
-      if (!audio.paused) await play();
+      if (was) await play();
       else setPlayIcon();
     });
 
-    // Update loop
     audio.addEventListener("timeupdate", () => {
       if (!seeking) updateSeek();
       saveState({ time: audio.currentTime || 0 });
     });
 
     audio.addEventListener("ended", async () => {
-      // pasa a la siguiente
       const next = (index + 1) % TRACKS.length;
       restoredTime = 0;
       await setTrack(next, false);
-      // si estaba reproduciendo, sigue
       await play();
     });
 
-    // Guardar antes de navegar
-    function persistNow(){
+    function persistNow() {
       saveState({
         index,
         time: audio.currentTime || 0,
-        playing: !audio.paused
+        playing: !audio.paused,
       });
     }
     window.addEventListener("pagehide", persistNow);
     window.addEventListener("beforeunload", persistNow);
 
-    // Interceptar clicks en links internos para guardar estado
-    $$('a[href$=".html"]').forEach(a => {
-      a.addEventListener("click", () => persistNow(), { capture:true });
+    $$('a[href*=".html"]').forEach((a) => {
+      a.addEventListener("click", () => persistNow(), { capture: true });
     });
 
-    // Init
     setActiveChip(index);
     setTrack(index, true).then(async () => {
       setPlayIcon();
       updateSeek();
-      setTimeout(updateDockOffsets, 80);
+      setTimeout(updateDockOffsets, 120);
 
-      // Restaurar reproducción si estaba sonando (intenta)
-      if (wasPlaying){
-        // importante: restaurar tiempo guardado
-        restoredTime = restoredTime || Number(loadState().time || 0);
+      if (wasPlaying) {
+        restoredTime = Number(loadState().time || 0);
         await play();
       }
     });
   }
 
   // ---------- Acepto page logic (WhatsApp SOLO tras aceptar) ----------
-  function initAcepto(){
+  function initAcepto() {
     const box = document.getElementById("aceptoBox");
     if (!box) return;
 
@@ -365,23 +397,26 @@
     yes.addEventListener("click", () => {
       ok.classList.add("show");
       msg.classList.remove("show");
-      // burst hearts
-      for(let i=0;i<20;i++){
+
+      for (let i = 0; i < 20; i++) {
         setTimeout(() => {
           const layer = document.getElementById("heartsLayer");
           if (!layer) return;
+
           const h = document.createElement("div");
           h.className = "heart";
-          h.textContent = ["💗","💖","💘","💞","💕"][Math.floor(Math.random()*5)];
-          h.style.fontSize = `${18 + Math.random()*22}px`;
-          h.style.left = `${35 + Math.random()*30}vw`;
+          h.textContent = ["💗", "💖", "💘", "💞", "💕"][Math.floor(Math.random() * 5)];
+          h.style.fontSize = `${18 + Math.random() * 22}px`;
+          h.style.left = `${35 + Math.random() * 30}vw`;
           h.style.bottom = `20vh`;
-          h.style.animationDuration = `${5 + Math.random()*3}s`;
-          h.style.opacity = `${0.22 + Math.random()*0.20}`;
+          h.style.animationDuration = `${5 + Math.random() * 3}s`;
+          h.style.opacity = `${0.22 + Math.random() * 0.2}`;
+
           layer.appendChild(h);
-          setTimeout(()=>h.remove(), 9000);
-        }, i*40);
+          setTimeout(() => h.remove(), 9000);
+        }, i * 40);
       }
+
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
@@ -390,25 +425,22 @@
       msg.classList.add("show");
       ok.classList.remove("show");
 
-      const phrases = [
-        "mmm… piénsalo otra vez 😌",
-        "yo sé que quieres 😳",
-        "no me rompas el corazoncito 🥺",
-        "última oportunidad… 💗"
-      ];
-      no.textContent = phrases[Math.min(noCount-1, phrases.length-1)];
+      const phrases = ["mmm… piénsalo otra vez 😌", "yo sé que quieres 😳", "no me rompas el corazoncito 🥺", "última oportunidad… 💗"];
+      no.textContent = phrases[Math.min(noCount - 1, phrases.length - 1)];
     });
   }
 
   // ---------- LocalStorage checklist for citas / cupones ----------
-  function initChecklist(storageKey){
+  function initChecklist(storageKey) {
     const inputs = $$(`[data-store="${storageKey}"] input[type="checkbox"]`);
     if (!inputs.length) return;
 
     let data = {};
-    try{ data = JSON.parse(localStorage.getItem(storageKey) || "{}"); }catch{}
+    try {
+      data = JSON.parse(localStorage.getItem(storageKey) || "{}");
+    } catch {}
 
-    inputs.forEach(ch => {
+    inputs.forEach((ch) => {
       const id = ch.getAttribute("data-id");
       ch.checked = Boolean(data[id]);
 
@@ -420,13 +452,13 @@
   }
 
   // ---------- Random for citas / cupones ----------
-  function initRandomPick(btnId, outId, items){
+  function initRandomPick(btnId, outId, items) {
     const btn = document.getElementById(btnId);
     const out = document.getElementById(outId);
     if (!btn || !out) return;
 
     btn.addEventListener("click", () => {
-      const pick = items[Math.floor(Math.random()*items.length)];
+      const pick = items[Math.floor(Math.random() * items.length)];
       out.textContent = pick;
       out.parentElement.classList.add("show");
     });
@@ -449,7 +481,7 @@
       "Fotos juntos en un lugar bonito 📸",
       "Ir a un mirador y hablar horas ✨",
       "Noche de juegos (cartas / retos) 🎮",
-      "Café y hablar de nuestros sueños ☕"
+      "Café y hablar de nuestros sueños ☕",
     ]);
 
     // Cupones
@@ -460,10 +492,9 @@
       "Cupón: Cena bonita (yo invito) 🍽️",
       "Cupón: Salida sorpresa (yo la planeo) 🌹",
       "Cupón: Noche de pelis + antojos 🎬",
-      "Cupón: Un día de mimos solo para ti 🧸"
+      "Cupón: Un día de mimos solo para ti 🧸",
     ]);
 
-    setTimeout(updateDockOffsets, 120);
+    setTimeout(updateDockOffsets, 160);
   });
-
 })();
