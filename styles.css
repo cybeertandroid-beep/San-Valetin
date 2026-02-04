@@ -44,9 +44,10 @@ body{
 
 /* para que el contenido no quede tapado por el contador y el player */
 main{
-  padding-top: calc(var(--topDock) + 10px);
-  padding-bottom: calc(var(--bottomDock) + 10px);
+  padding-top: calc(var(--topDock) + 2px);   /* más pegado */
+  padding-bottom: calc(var(--bottomDock) + 8px);
 }
+
 
 a{color:inherit}
 img{max-width:100%; display:block}
