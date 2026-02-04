@@ -3,97 +3,107 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#ff79b2" />
   <title>Citas ✨</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800;900&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="styles.css" />
+  <script defer src="countdown.js"></script>
+  <script defer src="app.js"></script>
 </head>
+
 <body>
-
-  <div class="countdown-wrap">
-    <div id="countdown" class="countdown" data-target="2026-04-12T00:00:00-05:00">
-      <div class="countdown-title">
-        <span>Faltan para volver a vernos</span><span>💗</span>
-      </div>
-      <div class="countdown-grid">
-        <div class="cd-box"><div id="cd_days" class="cd-num">--</div><div class="cd-lbl">DÍAS</div></div>
-        <div class="cd-box"><div id="cd_hrs"  class="cd-num">--</div><div class="cd-lbl">HRS</div></div>
-        <div class="cd-box"><div id="cd_min"  class="cd-num">--</div><div class="cd-lbl">MIN</div></div>
-        <div class="cd-box"><div id="cd_sec"  class="cd-num">--</div><div class="cd-lbl">SEG</div></div>
-      </div>
+  <aside id="countdownDock" data-target="2026-04-12T00:00:00-05:00">
+    <div class="cd-head">
+      <div>Faltan para volver a vernos 💗</div>
+      <div class="cd-heart">💗</div>
     </div>
-  </div>
+    <div class="cd-grid">
+      <div class="cd-cell"><div class="cd-num" data-cd="days">--</div><div class="cd-lab">DÍAS</div></div>
+      <div class="cd-cell"><div class="cd-num" data-cd="hours">--</div><div class="cd-lab">HRS</div></div>
+      <div class="cd-cell"><div class="cd-num" data-cd="mins">--</div><div class="cd-lab">MIN</div></div>
+      <div class="cd-cell"><div class="cd-num" data-cd="secs">--</div><div class="cd-lab">SEG</div></div>
+    </div>
+  </aside>
 
-  <audio id="bgm" preload="auto" loop playsinline>
-    <source src="audio/uwaie.mp3" type="audio/mpeg">
-  </audio>
+  <div id="playerDock"></div>
 
-  <div id="player" class="player-wrap" aria-label="Reproductor de música">
-    <button id="playerBtn" class="player-btn" aria-label="Toca para reproducir" aria-pressed="false">
-      <span class="icon play"></span>
-    </button>
-    <div class="player-text">Toca para reproducir</div>
-    <button id="playerMini" class="player-mini" aria-label="Minimizar">▾</button>
-  </div>
-
-  <main class="page">
-    <div class="container">
-      <section class="card">
-        <div class="kicker">Citas ✨</div>
+  <main>
+    <div class="wrap">
+      <div class="card pad">
+        <div class="top-kicker">Citas ✨</div>
         <h1>Citas que quiero tener contigo ✨</h1>
-        <p class="subtitle">Para cuando vuelvas… y para toda la vida 💗</p>
+        <p class="sub">Para cuando vuelvas… y para toda la vida 💗</p>
 
-        <div class="hr"></div>
+        <hr class="hr"/>
 
-        <div class="item">
-          <h4>🎲 Elige una cita al azar</h4>
-          <p>Presiona el botón y te sale una idea.</p>
+        <div class="card pad" style="background:rgba(255,255,255,.70)">
+          <p class="title-mini">🎲 Elige una cita al azar</p>
+          <p class="sub" style="text-align:left;margin:6px 0 0">Presiona el botón y te sale una idea.</p>
 
-          <div class="actions" style="margin-top:12px;">
-            <button id="pickDateBtn" class="btn btn-primary btn-small">Elegir cita ✨</button>
-            <a class="btn btn-ghost btn-small" data-wa="open" href="#">Abrir WhatsApp 💬</a>
+          <div class="pills" style="justify-content:flex-start">
+            <button class="btn primary" id="pickCita" type="button">Elegir cita ✨</button>
           </div>
 
-          <div class="pill" style="margin-top:12px;">
-            <span>💗</span>
-            <span id="pickDateOut">Toca “Elegir cita”</span>
+          <div class="notice" id="citaBox">
+            <div style="font-weight:900;color:#2b2430" id="citaOut">—</div>
           </div>
         </div>
 
-        <div class="hr"></div>
+        <div class="section">
+          <p class="title-mini">Lista de citas (checklist) 💗</p>
 
-        <div class="section-title">Lista de citas (checklist) 💗</div>
-        <p class="section-sub">Marca las que ya hicimos… y hacemos más 😌</p>
+          <div class="list" data-store="sv_citas_check">
+            <label class="item">
+              <input type="checkbox" data-id="c1">
+              <div><h3>🍽️ Cena romántica + postre 💗</h3><p>Una cena bonita (con postre sí o sí).</p></div>
+            </label>
 
-        <div id="datesList" class="stack" data-store="datesChecklist">
-          <div class="item check"><input id="d1" type="checkbox"><label for="d1">Cena romántica + postre 💗</label></div>
-          <div class="item check"><input id="d2" type="checkbox"><label for="d2">Helado + caminata de noche 🌙</label></div>
-          <div class="item check"><input id="d3" type="checkbox"><label for="d3">Peli en casa con mantita 🎬</label></div>
-          <div class="item check"><input id="d4" type="checkbox"><label for="d4">Cita sorpresa (yo la planeo) 🌹</label></div>
-          <div class="item check"><input id="d5" type="checkbox"><label for="d5">Fotos juntos en un lugar bonito 📸</label></div>
-          <div class="item check"><input id="d6" type="checkbox"><label for="d6">Desayuno juntos un domingo 🥐</label></div>
-          <div class="item check"><input id="d7" type="checkbox"><label for="d7">Ir a un mirador y conversar horas ✨</label></div>
-          <div class="item check"><input id="d8" type="checkbox"><label for="d8">Noche de juegos (cartas/retos) 🎮</label></div>
-          <div class="item check"><input id="d9" type="checkbox"><label for="d9">Café y hablar de nuestros sueños ☕</label></div>
-          <div class="item check"><input id="d10" type="checkbox"><label for="d10">Picnic simple, pero lindo 🧺</label></div>
+            <label class="item">
+              <input type="checkbox" data-id="c2">
+              <div><h3>🍦 Helado + caminata de noche 🌙</h3><p>Heladito, paseo y fotos.</p></div>
+            </label>
+
+            <label class="item">
+              <input type="checkbox" data-id="c3">
+              <div><h3>🎬 Peli en casa con mantita</h3><p>Antojitos y cero estrés.</p></div>
+            </label>
+
+            <label class="item">
+              <input type="checkbox" data-id="c4">
+              <div><h3>📸 Fotos juntos en un lugar bonito</h3><p>Un lugar lindo y tú brillando.</p></div>
+            </label>
+
+            <label class="item">
+              <input type="checkbox" data-id="c5">
+              <div><h3>✨ Ir a un mirador y hablar horas</h3><p>Solo tú y yo, sin prisa.</p></div>
+            </label>
+          </div>
         </div>
 
-        <div class="actions" style="margin-top:20px;">
-          <a class="btn btn-ghost" href="index.html">Inicio ↩</a>
-          <a class="btn btn-ghost" href="recuerdos.html">Recuerdos 💗</a>
-          <a class="btn btn-ghost" href="cupones.html">Cupones 💗</a>
-          <a class="btn btn-ghost" href="amo.html">5 cosas que amo 💗</a>
+        <div class="pills" style="margin-top:18px">
+          <a class="pill" href="index.html">Inicio ↩</a>
+          <a class="pill" href="recuerdos.html">Recuerdos 💗</a>
+          <a class="pill" href="cupones.html">Cupones 💗</a>
+          <a class="pill" href="amo.html">5 cosas que amo 💗</a>
         </div>
-
-      </section>
+      </div>
     </div>
   </main>
 
-  <div id="modal" class="modal" aria-hidden="true">
-    <button id="modalClose" class="modal-close" aria-label="Cerrar">✕</button>
-    <div class="modal-box">
-      <img id="modalImg" class="modal-img" alt="Foto ampliada">
-    </div>
-  </div>
-
-  <script src="shared.js"></script>
+  <script>
+    // Caja de salida (solo UI)
+    document.addEventListener("DOMContentLoaded", () => {
+      const out = document.getElementById("citaOut");
+      const box = document.getElementById("citaBox");
+      const btn = document.getElementById("pickCita");
+      if(btn && box && out){
+        btn.addEventListener("click", () => box.classList.add("show"));
+      }
+    });
+  </script>
 </body>
 </html>
