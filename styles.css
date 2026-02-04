@@ -190,10 +190,17 @@ h1{
 
 @media (max-width: 520px){
   #countdownDock{
-    left: 50%;
-    transform: translateX(-50%);
+     will-change: auto;
+  transform: none;
+    left: 12px;
+    right: 12px;
+    margin: 0 auto;
+    transform: none !important; /* <-- clave */
   }
 }
+
+
+
 
 .cd-head{
   display:flex;
