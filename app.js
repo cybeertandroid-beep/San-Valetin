@@ -8,16 +8,17 @@
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
   // ---------- Layout offsets (no tapar contenido) ----------
-  function updateDockOffsets() {
-    const cd = $("#countdownDock");
-    const pd = $("#playerDock");
+function updateDockOffsets(){
+  const cd = $("#countdownDock");
+  const pd = $("#playerDock");
 
-    const top = cd ? cd.getBoundingClientRect().height + 26 : 40;
-    const bottom = pd ? pd.getBoundingClientRect().height + 26 : 40;
+  // antes +26: dejaba demasiado aire
+  const top = cd ? cd.getBoundingClientRect().height + 12 : 34;
+  const bottom = pd ? pd.getBoundingClientRect().height + 14 : 34;
 
-    document.documentElement.style.setProperty("--topDock", `${Math.ceil(top)}px`);
-    document.documentElement.style.setProperty("--bottomDock", `${Math.ceil(bottom)}px`);
-  }
+  document.documentElement.style.setProperty("--topDock", `${Math.ceil(top)}px`);
+  document.documentElement.style.setProperty("--bottomDock", `${Math.ceil(bottom)}px`);
+}
 
   const scheduleOffsets = (() => {
     let t = null;
