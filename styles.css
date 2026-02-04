@@ -515,3 +515,20 @@ h1{
   text-align:center;
 }
 .notice.show{ display:block; }
+
+/* === FIX: Player SIEMPRE abajo (override) === */
+#playerDock{
+  position: fixed !important;
+  top: auto !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  bottom: calc(env(safe-area-inset-bottom) + 12px) !important;
+
+  margin: 0 !important;
+  z-index: 9999 !important; /* por si algo lo tapa */
+}
+
+/* por si algún estilo raro le mete "inset" */
+#playerDock{ inset: auto !important; }
+
