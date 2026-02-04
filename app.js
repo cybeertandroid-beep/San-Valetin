@@ -1,431 +1,468 @@
 (() => {
-  const CONFIG = {
-    // Ajusta si quieres (fecha destino):
-    // Importante: el -05:00 es Perú. Si no quieres hora exacta, déjalo así.
-    targetDateISO: "2026-04-12T00:00:00-05:00",
+  if (window.__SV_APP_INITED) return;
+  window.__SV_APP_INITED = true;
 
-    // WhatsApp (SIN mensaje automático) - tu número:
-    waNumber: "51990367042", // 51 + 990367042
+  // ---------- Helpers ----------
+  const $ = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+  const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
-    // Audio real:
-    audioSrc: "audio/uwaie.mp3",
+  // ---------- Layout offsets (no tapar contenido) ----------
+  function updateDockOffsets(){
+    const cd = $("#countdownDock");
+    const pd = $("#playerDock");
+    const top = cd ? cd.getBoundingClientRect().height + 26 : 40;
+    const bottom = pd ? pd.getBoundingClientRect().height + 26 : 40;
+    document.documentElement.style.setProperty("--topDock", `${Math.ceil(top)}px`);
+    document.documentElement.style.setProperty("--bottomDock", `${Math.ceil(bottom)}px`);
+  }
 
-    // Fotos (nombres exactos como los tienes en /fotos)
-    recuerdosA: ["A1.jpeg","A2.jpeg","A3.jpeg","A4.jpeg","A5.jpeg"],
-    recuerdosD: ["D1.jpeg","D2.jpeg","D3.jpeg","D4.jpeg","D5.jpeg"],
-  };
+  window.addEventListener("resize", () => setTimeout(updateDockOffsets, 80));
+  window.addEventListener("load", () => setTimeout(updateDockOffsets, 120));
+  document.addEventListener("DOMContentLoaded", () => setTimeout(updateDockOffsets, 60));
 
-  // ========= Helpers =========
-  const $ = (sel, root=document) => root.querySelector(sel);
-  const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+  // ---------- Hearts (se ven en celular) ----------
+  function initHearts(){
+    let layer = $("#heartsLayer");
+    if (!layer){
+      layer = document.createElement("div");
+      layer.id = "heartsLayer";
+      document.body.appendChild(layer);
+    }
 
-  // ========= WhatsApp (sin texto) =========
-  function wireWhatsApp() {
-    $$("[data-wa]").forEach(el => {
-      el.addEventListener("click", (e) => {
-        e.preventDefault();
-        window.open(`https://wa.me/${CONFIG.waNumber}`, "_blank", "noopener");
-      });
+    const heartChars = ["💗","💖","💘","💞","💕"];
+    function spawn(){
+      const h = document.createElement("div");
+      h.className = "heart";
+      h.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
+      const size = 16 + Math.random()*18;
+      h.style.fontSize = `${size}px`;
+      h.style.left = `${Math.random()*100}vw`;
+      h.style.bottom = `-30px`;
+      h.style.animationDuration = `${8 + Math.random()*6}s`;
+      h.style.opacity = `${0.12 + Math.random()*0.16}`;
+      layer.appendChild(h);
+
+      setTimeout(() => h.remove(), 16000);
+    }
+
+    // densidad suave (no molesta)
+    setInterval(spawn, 900);
+    for(let i=0;i<6;i++) setTimeout(spawn, i*250);
+  }
+
+  // ---------- Lightbox (X siempre visible + no se descuadra) ----------
+  function initLightbox(){
+    let lb = $("#lightbox");
+    if (!lb){
+      lb = document.createElement("div");
+      lb.id = "lightbox";
+      lb.innerHTML = `
+        <button class="lb-close" type="button" aria-label="Cerrar">×</button>
+        <div class="lb-stage">
+          <img class="lb-img" alt="Foto" />
+        </div>
+      `;
+      document.body.appendChild(lb);
+    }
+
+    const closeBtn = $(".lb-close", lb);
+    const imgEl = $(".lb-img", lb);
+
+    function open(src){
+      imgEl.src = src;
+      lb.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+    function close(){
+      lb.classList.remove("open");
+      imgEl.src = "";
+      document.body.style.overflow = "";
+    }
+
+    closeBtn.addEventListener("click", close);
+    lb.addEventListener("click", (e) => {
+      if (e.target === lb) close();
+    });
+
+    // activa en todas las imágenes dentro de .photo
+    $$(".photo img").forEach(img => {
+      img.addEventListener("click", () => open(img.src));
     });
   }
 
-  // ========= UI GLOBAL: Contador + Player =========
-  let audio;
-  let audioWanted = false; // se vuelve true cuando usuario toca play
-  let firstGestureBound = false;
+  // ---------- Player (persistente + playlist + seek) ----------
+  const STORAGE = "sv_player_state_v3";
+  const TRACKS = [
+    { id:"uwaie", label:"UWAIE", sources:["audio/uwaie.mp3","uwaie.mp3"] },
+    { id:"mi_refe", label:"Mi refe", sources:["audio/Mi-refe.mp3","Mi-refe.mp3"] },
+    { id:"mas_que_tu", label:"Más que tú", sources:["audio/mas-que-tu.mp3","mas-que-tu.mp3"] },
+  ];
 
-  function mountGlobalUI() {
-    const root = $("#floating-ui");
-    if (!root) return;
+  function loadState(){
+    try{
+      return JSON.parse(localStorage.getItem(STORAGE) || "{}");
+    }catch{ return {}; }
+  }
+  function saveState(patch){
+    const cur = loadState();
+    const next = { ...cur, ...patch, ts: Date.now() };
+    localStorage.setItem(STORAGE, JSON.stringify(next));
+    return next;
+  }
 
-    root.innerHTML = `
-      <section class="floating-counter" id="counter">
-        <div class="counter-title">
-          <span>Faltan para volver a vernos</span>
-          <span class="heart" aria-hidden="true">💗</span>
-        </div>
-        <div class="counter-grid">
-          <div class="counter-box"><span class="num" id="cd-days">--</span><span class="lab">DÍAS</span></div>
-          <div class="counter-box"><span class="num" id="cd-hours">--</span><span class="lab">HRS</span></div>
-          <div class="counter-box"><span class="num" id="cd-mins">--</span><span class="lab">MIN</span></div>
-          <div class="counter-box"><span class="num" id="cd-secs">--</span><span class="lab">SEG</span></div>
-        </div>
-      </section>
+  async function pickFirstWorkingSource(audio, sources){
+    // Intenta en orden; si falla, pasa al siguiente.
+    for (const src of sources){
+      try{
+        audio.src = src;
+        await audio.load();
+        return src;
+      }catch{}
+    }
+    // deja el primero igual
+    audio.src = sources[0];
+    return sources[0];
+  }
 
-      <section class="floating-player" id="player">
-        <button class="player-btn" id="playerBtn" type="button" aria-label="Reproducir / Pausar">▶</button>
-        <div class="player-label">
-          <div class="t1">Toca para reproducir</div>
-          <div class="t2">Música</div>
+  function fmtTime(t){
+    if (!isFinite(t) || t < 0) return "0:00";
+    const m = Math.floor(t/60);
+    const s = Math.floor(t%60);
+    return `${m}:${String(s).padStart(2,"0")}`;
+  }
+
+  function initPlayer(){
+    let dock = $("#playerDock");
+    if (!dock){
+      dock = document.createElement("div");
+      dock.id = "playerDock";
+      document.body.appendChild(dock);
+    }
+
+    // UI
+    dock.innerHTML = `
+      <div class="player-bar">
+        <button class="pbtn" type="button" data-act="toggle" aria-label="Reproducir o pausar">▶</button>
+
+        <div class="ptxt">
+          <div class="ptitle" id="ptitle">Toca para reproducir</div>
+          <div class="psub" id="psub">Música • 1/${TRACKS.length}</div>
         </div>
-      </section>
+
+        <button class="pbtn secondary" type="button" data-act="prev" aria-label="Anterior">⟨</button>
+        <button class="pbtn secondary" type="button" data-act="next" aria-label="Siguiente">⟩</button>
+        <button class="pbtn secondary" type="button" data-act="expand" aria-label="Expandir">▾</button>
+      </div>
+
+      <div class="player-panel">
+        <div class="seek">
+          <input id="seek" type="range" min="0" max="1000" value="0" />
+          <div class="timeRow">
+            <span id="tcur">0:00</span>
+            <span id="tdur">0:00</span>
+          </div>
+        </div>
+        <div class="trackRow" id="trackRow"></div>
+      </div>
     `;
 
-    // Ajustar padding de página para que el contador NO tape nada
-    const counter = $("#counter");
-    const player = $("#player");
-    const updateSafeSpace = () => {
-      const ch = counter?.offsetHeight || 0;
-      const ph = player?.offsetHeight || 0;
-      document.documentElement.style.setProperty("--ui-top", `${ch + 22}px`);
-      document.documentElement.style.setProperty("--ui-bottom", `${ph + 22}px`);
-    };
-    updateSafeSpace();
+    const btnToggle = dock.querySelector('[data-act="toggle"]');
+    const btnPrev = dock.querySelector('[data-act="prev"]');
+    const btnNext = dock.querySelector('[data-act="next"]');
+    const btnExpand = dock.querySelector('[data-act="expand"]');
+    const seek = $("#seek", dock);
+    const tcur = $("#tcur", dock);
+    const tdur = $("#tdur", dock);
+    const psub = $("#psub", dock);
+    const trackRow = $("#trackRow", dock);
 
-    const ro = new ResizeObserver(updateSafeSpace);
-    if (counter) ro.observe(counter);
-    if (player) ro.observe(player);
+    // Audio element
+    const audio = new Audio();
+    audio.preload = "metadata";
+    audio.loop = false;
 
-    // Contador
-    startCountdown();
+    // Build track chips
+    trackRow.innerHTML = TRACKS.map((t,i)=>(
+      `<button class="track" type="button" data-i="${i}">${t.label}</button>`
+    )).join("");
 
-    // Player
-    setupAudioPlayer();
-  }
-
-  function startCountdown() {
-    const target = new Date(CONFIG.targetDateISO).getTime();
-
-    const pad2 = (n) => String(n).padStart(2, "0");
-    const tick = () => {
-      const now = Date.now();
-      let diff = Math.max(0, target - now);
-
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      diff -= days * (1000 * 60 * 60 * 24);
-
-      const hours = Math.floor(diff / (1000 * 60 * 60));
-      diff -= hours * (1000 * 60 * 60);
-
-      const mins = Math.floor(diff / (1000 * 60));
-      diff -= mins * (1000 * 60);
-
-      const secs = Math.floor(diff / 1000);
-
-      const dEl = $("#cd-days");
-      const hEl = $("#cd-hours");
-      const mEl = $("#cd-mins");
-      const sEl = $("#cd-secs");
-      if (dEl) dEl.textContent = String(days);
-      if (hEl) hEl.textContent = pad2(hours);
-      if (mEl) mEl.textContent = pad2(mins);
-      if (sEl) sEl.textContent = pad2(secs);
-    };
-
-    tick();
-    setInterval(tick, 1000);
-  }
-
-  function setupAudioPlayer() {
-    // Creamos audio por JS para controlar estado entre páginas
-    audio = new Audio(CONFIG.audioSrc);
-    audio.loop = true;
-    audio.preload = "auto";
-
-    // Restaurar estado (si estaba sonando antes)
-    const savedTime = Number(localStorage.getItem("sv_audio_time") || "0");
-    const wasPlaying = localStorage.getItem("sv_audio_playing") === "1";
-
-    if (Number.isFinite(savedTime) && savedTime > 0) {
-      try { audio.currentTime = savedTime; } catch {}
+    function setActiveChip(i){
+      $$(".track", trackRow).forEach(b => b.classList.toggle("active", Number(b.dataset.i) === i));
     }
-    audioWanted = wasPlaying;
 
-    // Guardar tiempo cada cierto rato
-    let lastSave = 0;
+    let st = loadState();
+    let index = clamp(Number(st.index ?? 0), 0, TRACKS.length-1);
+    let wasPlaying = Boolean(st.playing);
+    let restoredTime = Number(st.time ?? 0);
+
+    async function setTrack(i, keepTime=false){
+      index = clamp(i, 0, TRACKS.length-1);
+      setActiveChip(index);
+      psub.textContent = `Música • ${index+1}/${TRACKS.length}`;
+
+      const tr = TRACKS[index];
+      await pickFirstWorkingSource(audio, tr.sources);
+
+      audio.onloadedmetadata = () => {
+        if (!keepTime) restoredTime = 0;
+        const safe = clamp(restoredTime, 0, (audio.duration || restoredTime));
+        audio.currentTime = isFinite(safe) ? safe : 0;
+        tdur.textContent = fmtTime(audio.duration);
+        saveState({ index, time: audio.currentTime });
+      };
+
+      saveState({ index });
+    }
+
+    function setPlayIcon(){
+      btnToggle.textContent = audio.paused ? "▶" : "❚❚";
+    }
+
+    function updateSeek(){
+      const dur = audio.duration || 0;
+      const cur = audio.currentTime || 0;
+      tcur.textContent = fmtTime(cur);
+      tdur.textContent = fmtTime(dur);
+      const val = dur ? Math.floor((cur/dur)*1000) : 0;
+      seek.value = String(val);
+    }
+
+    // Seek interaction
+    let seeking = false;
+    seek.addEventListener("input", () => {
+      seeking = true;
+      const dur = audio.duration || 0;
+      if (!dur) return;
+      const target = (Number(seek.value)/1000) * dur;
+      tcur.textContent = fmtTime(target);
+    });
+    seek.addEventListener("change", () => {
+      const dur = audio.duration || 0;
+      if (!dur) { seeking = false; return; }
+      const target = (Number(seek.value)/1000) * dur;
+      audio.currentTime = clamp(target, 0, dur);
+      saveState({ time: audio.currentTime });
+      seeking = false;
+    });
+
+    // Controls
+    async function play(){
+      try{
+        await audio.play();
+        setPlayIcon();
+        saveState({ playing:true });
+      }catch(e){
+        // iOS puede bloquear autoplay: quedará listo, usuario toca play
+        saveState({ playing:false });
+        setPlayIcon();
+      }
+    }
+    function pause(){
+      audio.pause();
+      setPlayIcon();
+      saveState({ playing:false, time: audio.currentTime || 0 });
+    }
+
+    btnToggle.addEventListener("click", async () => {
+      if (audio.paused) await play();
+      else pause();
+    });
+
+    btnPrev.addEventListener("click", async () => {
+      const next = (index - 1 + TRACKS.length) % TRACKS.length;
+      restoredTime = 0;
+      await setTrack(next, false);
+      if (!audio.paused) await play();
+      else setPlayIcon();
+    });
+
+    btnNext.addEventListener("click", async () => {
+      const next = (index + 1) % TRACKS.length;
+      restoredTime = 0;
+      await setTrack(next, false);
+      if (!audio.paused) await play();
+      else setPlayIcon();
+    });
+
+    btnExpand.addEventListener("click", () => {
+      dock.classList.toggle("expanded");
+      btnExpand.textContent = dock.classList.contains("expanded") ? "▴" : "▾";
+      setTimeout(updateDockOffsets, 60);
+    });
+
+    // Track chips
+    trackRow.addEventListener("click", async (e) => {
+      const b = e.target.closest(".track");
+      if (!b) return;
+      restoredTime = 0;
+      await setTrack(Number(b.dataset.i), false);
+      // si estaba sonando, sigue
+      if (!audio.paused) await play();
+      else setPlayIcon();
+    });
+
+    // Update loop
     audio.addEventListener("timeupdate", () => {
-      const now = Date.now();
-      if (now - lastSave > 1500) {
-        lastSave = now;
-        localStorage.setItem("sv_audio_time", String(audio.currentTime || 0));
-      }
+      if (!seeking) updateSeek();
+      saveState({ time: audio.currentTime || 0 });
     });
 
-    audio.addEventListener("play", () => localStorage.setItem("sv_audio_playing", "1"));
-    audio.addEventListener("pause", () => localStorage.setItem("sv_audio_playing", "0"));
-
-    const btn = $("#playerBtn");
-    if (!btn) return;
-
-    const setIcon = () => { btn.textContent = audio.paused ? "▶" : "⏸"; };
-    setIcon();
-
-    btn.addEventListener("click", async () => {
-      // click del usuario = permitido en iPhone
-      audioWanted = true;
-      try {
-        if (audio.paused) await audio.play();
-        else audio.pause();
-      } catch (e) {
-        // Si falla, igual dejamos "wanted" para el siguiente gesto
-      }
-      setIcon();
+    audio.addEventListener("ended", async () => {
+      // pasa a la siguiente
+      const next = (index + 1) % TRACKS.length;
+      restoredTime = 0;
+      await setTrack(next, false);
+      // si estaba reproduciendo, sigue
+      await play();
     });
 
-    // iPhone/Safari no permite autoplay:
-    // Solución: cuando el usuario toque cualquier parte por primera vez,
-    // intentamos reproducir si "audioWanted" estaba activo.
-    if (!firstGestureBound) {
-      firstGestureBound = true;
-
-      const tryAuto = async () => {
-        if (!audioWanted) return;
-        try {
-          await audio.play();
-          setIcon();
-        } catch {}
-      };
-
-      const onFirstGesture = () => {
-        tryAuto();
-        window.removeEventListener("touchstart", onFirstGesture);
-        window.removeEventListener("click", onFirstGesture);
-      };
-
-      window.addEventListener("touchstart", onFirstGesture, { once: true, passive: true });
-      window.addEventListener("click", onFirstGesture, { once: true });
-    }
-
-    // Si venía sonando en desktop (a veces permite), probamos suave:
-    if (audioWanted) {
-      audio.play().then(setIcon).catch(() => {
-        // normal en iPhone: solo sonará tras el primer toque
-        setIcon();
+    // Guardar antes de navegar
+    function persistNow(){
+      saveState({
+        index,
+        time: audio.currentTime || 0,
+        playing: !audio.paused
       });
     }
+    window.addEventListener("pagehide", persistNow);
+    window.addEventListener("beforeunload", persistNow);
+
+    // Interceptar clicks en links internos para guardar estado
+    $$('a[href$=".html"]').forEach(a => {
+      a.addEventListener("click", () => persistNow(), { capture:true });
+    });
+
+    // Init
+    setActiveChip(index);
+    setTrack(index, true).then(async () => {
+      setPlayIcon();
+      updateSeek();
+      setTimeout(updateDockOffsets, 80);
+
+      // Restaurar reproducción si estaba sonando (intenta)
+      if (wasPlaying){
+        // importante: restaurar tiempo guardado
+        restoredTime = restoredTime || Number(loadState().time || 0);
+        await play();
+      }
+    });
   }
 
-  // ========= Lightbox Fotos (PRO: X siempre visible) =========
-  let lockScrollY = 0;
+  // ---------- Acepto page logic (WhatsApp SOLO tras aceptar) ----------
+  function initAcepto(){
+    const box = document.getElementById("aceptoBox");
+    if (!box) return;
 
-  function lockBody() {
-    lockScrollY = window.scrollY || 0;
-    document.body.classList.add("is-locked");
-    document.body.style.top = `-${lockScrollY}px`;
+    const yes = document.getElementById("btnYes");
+    const no = document.getElementById("btnNo");
+    const ok = document.getElementById("accepted");
+    const msg = document.getElementById("declined");
+
+    let noCount = 0;
+
+    yes.addEventListener("click", () => {
+      ok.classList.add("show");
+      msg.classList.remove("show");
+      // burst hearts
+      for(let i=0;i<20;i++){
+        setTimeout(() => {
+          const layer = document.getElementById("heartsLayer");
+          if (!layer) return;
+          const h = document.createElement("div");
+          h.className = "heart";
+          h.textContent = ["💗","💖","💘","💞","💕"][Math.floor(Math.random()*5)];
+          h.style.fontSize = `${18 + Math.random()*22}px`;
+          h.style.left = `${35 + Math.random()*30}vw`;
+          h.style.bottom = `20vh`;
+          h.style.animationDuration = `${5 + Math.random()*3}s`;
+          h.style.opacity = `${0.22 + Math.random()*0.20}`;
+          layer.appendChild(h);
+          setTimeout(()=>h.remove(), 9000);
+        }, i*40);
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    no.addEventListener("click", () => {
+      noCount++;
+      msg.classList.add("show");
+      ok.classList.remove("show");
+
+      const phrases = [
+        "mmm… piénsalo otra vez 😌",
+        "yo sé que quieres 😳",
+        "no me rompas el corazoncito 🥺",
+        "última oportunidad… 💗"
+      ];
+      no.textContent = phrases[Math.min(noCount-1, phrases.length-1)];
+    });
   }
 
-  function unlockBody() {
-    document.body.classList.remove("is-locked");
-    document.body.style.top = "";
-    window.scrollTo(0, lockScrollY);
-  }
+  // ---------- LocalStorage checklist for citas / cupones ----------
+  function initChecklist(storageKey){
+    const inputs = $$(`[data-store="${storageKey}"] input[type="checkbox"]`);
+    if (!inputs.length) return;
 
-  function setupLightbox() {
-    const lb = $("#lightbox");
-    if (!lb) return;
+    let data = {};
+    try{ data = JSON.parse(localStorage.getItem(storageKey) || "{}"); }catch{}
 
-    const img = $(".lightbox__img", lb);
+    inputs.forEach(ch => {
+      const id = ch.getAttribute("data-id");
+      ch.checked = Boolean(data[id]);
 
-    const close = () => {
-      lb.classList.remove("open");
-      lb.setAttribute("aria-hidden", "true");
-      if (img) { img.src = ""; img.alt = ""; }
-      unlockBody();
-    };
-
-    $$("[data-close]", lb).forEach(el => el.addEventListener("click", close));
-    window.addEventListener("keydown", (e) => { if (e.key === "Escape" && lb.classList.contains("open")) close(); });
-
-    // Exponer función global local
-    window.__openLightbox = (src, alt="") => {
-      if (!img) return;
-      lockBody();
-      img.src = src;
-      img.alt = alt;
-      lb.classList.add("open");
-      lb.setAttribute("aria-hidden", "false");
-    };
-  }
-
-  // ========= Recuerdos =========
-  function renderRecuerdos() {
-    const gridA = $("#gridA");
-    const gridD = $("#gridD");
-    if (!gridA || !gridD) return;
-
-    const makePhoto = (src, alt) => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "photo";
-      btn.innerHTML = `<img loading="lazy" src="${src}" alt="${alt}" />`;
-      btn.addEventListener("click", () => {
-        if (window.__openLightbox) window.__openLightbox(src, alt);
+      ch.addEventListener("change", () => {
+        data[id] = ch.checked;
+        localStorage.setItem(storageKey, JSON.stringify(data));
       });
-      return btn;
-    };
-
-    // A1..A5
-    CONFIG.recuerdosA.forEach((name, idx) => {
-      const src = `fotos/${name}`;
-      gridA.appendChild(makePhoto(src, `Momento ${idx + 1}`));
-    });
-
-    // D1..D5
-    CONFIG.recuerdosD.forEach((name, idx) => {
-      const src = `fotos/${name}`;
-      gridD.appendChild(makePhoto(src, `Foto ${idx + 1}`));
     });
   }
 
-  // ========= Citas =========
-  function setupCitas() {
-    const btn = $("#btnPickDate");
-    const out = $("#dateResult");
-    const checklist = $("#checklistDates");
-    if (!btn || !out || !checklist) return;
-
-    const ideas = [
-      "Cena romántica + postre 💗",
-      "Helado + caminata de noche 🌙",
-      "Peli en casa con mantita 🎬",
-      "Cita sorpresa (yo la planeo) 🌹",
-      "Fotos juntos en un lugar bonito 📸",
-      "Desayuno juntos un domingo 🥐",
-      "Ir a un mirador y conversar horas ✨",
-      "Noche de juegos (cartas / retos) 🎮",
-      "Café y hablar de nuestros sueños ☕",
-      "Un picnic simple, pero lindo 🧺",
-      "Atardecer juntos y promesas bonitas 🌅",
-      "Salir a bailar y reírnos mucho 💃🕺"
-    ];
+  // ---------- Random for citas / cupones ----------
+  function initRandomPick(btnId, outId, items){
+    const btn = document.getElementById(btnId);
+    const out = document.getElementById(outId);
+    if (!btn || !out) return;
 
     btn.addEventListener("click", () => {
-      const pick = ideas[Math.floor(Math.random() * ideas.length)];
+      const pick = items[Math.floor(Math.random()*items.length)];
       out.textContent = pick;
+      out.parentElement.classList.add("show");
     });
+  }
 
-    const items = [
-      "Cena romántica + postre 💗",
+  // ---------- Start ----------
+  document.addEventListener("DOMContentLoaded", () => {
+    initHearts();
+    initLightbox();
+    initPlayer();
+    initAcepto();
+
+    // Citas
+    initChecklist("sv_citas_check");
+    initRandomPick("pickCita", "citaOut", [
+      "Cena romántica + postre sí o sí 🍰",
       "Helado + caminata de noche 🌙",
       "Peli en casa con mantita 🎬",
-      "Cita sorpresa (yo la planeo) 🌹",
+      "Un picnic simple pero lindo 🧺",
       "Fotos juntos en un lugar bonito 📸",
-      "Desayuno juntos un domingo 🥐",
-      "Ir a un mirador y conversar horas ✨",
+      "Ir a un mirador y hablar horas ✨",
       "Noche de juegos (cartas / retos) 🎮",
-      "Café y hablar de nuestros sueños ☕",
-      "Un picnic simple, pero lindo 🧺",
-      "Atardecer juntos 🌅",
-      "Día de spa casero 🧴"
-    ];
+      "Café y hablar de nuestros sueños ☕"
+    ]);
 
-    const KEY = "sv_dates_checklist";
-    const state = JSON.parse(localStorage.getItem(KEY) || "{}");
+    // Cupones
+    initChecklist("sv_cupones_check");
+    initRandomPick("pickCupon", "cuponOut", [
+      "Cupón: Un beso infinito 💗",
+      "Cupón: Un abrazo largo (mínimo 2 min) 🫶",
+      "Cupón: Cena bonita (yo invito) 🍽️",
+      "Cupón: Salida sorpresa (yo la planeo) 🌹",
+      "Cupón: Noche de pelis + antojos 🎬",
+      "Cupón: Un día de mimos solo para ti 🧸"
+    ]);
 
-    checklist.innerHTML = "";
-    items.forEach((text, i) => {
-      const id = `d_${i}`;
-      const row = document.createElement("label");
-      row.className = "check";
-      row.innerHTML = `<input type="checkbox" ${state[id] ? "checked" : ""} /> <span>${text}</span>`;
-      const cb = $("input", row);
-      cb.addEventListener("change", () => {
-        state[id] = cb.checked;
-        localStorage.setItem(KEY, JSON.stringify(state));
-      });
-      checklist.appendChild(row);
-    });
-  }
+    setTimeout(updateDockOffsets, 120);
+  });
 
-  // ========= Cupones =========
-  function setupCupones() {
-    const grid = $("#couponGrid");
-    const modal = $("#couponModal");
-    if (!grid || !modal) return;
-
-    const titleEl = $("#couponTitle");
-    const descEl = $("#couponDesc");
-    const btnToggle = $("#btnToggleCoupon");
-    const btnRandom = $("#btnRandomCoupon");
-
-    const coupons = [
-      { id:"c1", title:"Cupón: Un beso infinito 💗", desc:"Canjeable por besos ilimitados (mínimo 10) cuando nos veamos." },
-      { id:"c2", title:"Cupón: Abrazo de 2 minutos 🫂", desc:"Abrazo largo, de esos que curan. Sin apuro." },
-      { id:"c3", title:"Cupón: Cita sorpresa ✨", desc:"Yo planifico todo: lugar, comida y detalle. Tú solo llegas bonita." },
-      { id:"c4", title:"Cupón: Desayuno para ti 🥐", desc:"Desayuno rico hecho por mí o pedido a tu gusto." },
-      { id:"c5", title:"Cupón: Peli + mantita 🎬", desc:"Noche de peli con snacks y cariño." },
-      { id:"c6", title:"Cupón: Noche de juegos 🎮", desc:"Juegos / retos suaves / risas. Lo que tú quieras." },
-      { id:"c7", title:"Cupón: Foto juntos 📸", desc:"Sesión de fotos juntos en un lugar bonito. Yo me esmero." },
-      { id:"c8", title:"Cupón: Atardecer contigo 🌅", desc:"Ir a ver el atardecer y hablar de nosotros." },
-      { id:"c9", title:"Cupón: Masaje (suave) 🧴", desc:"Masaje relajante (prometo hacerlo con amor y paciencia)." },
-      { id:"c10", title:"Cupón: Tu antojo 🍓", desc:"Lo que se te antoje: dulce, salado, bebida… yo invito." }
-    ];
-
-    const KEY = "sv_coupons_used";
-    const used = JSON.parse(localStorage.getItem(KEY) || "{}");
-
-    const render = () => {
-      grid.innerHTML = "";
-      coupons.forEach(c => {
-        const card = document.createElement("div");
-        card.className = `coupon ${used[c.id] ? "used" : ""}`;
-        card.innerHTML = `
-          <div class="tag">${used[c.id] ? "CANJEADO ✅" : "DISPONIBLE 🎟️"}</div>
-          <h3>${c.title}</h3>
-          <p>${c.desc}</p>
-        `;
-        card.addEventListener("click", () => openCoupon(c.id));
-        grid.appendChild(card);
-      });
-    };
-
-    let currentId = null;
-
-    const openCoupon = (id) => {
-      currentId = id;
-      const c = coupons.find(x => x.id === id);
-      if (!c) return;
-
-      titleEl.textContent = c.title;
-      descEl.textContent = c.desc;
-
-      btnToggle.textContent = used[id] ? "Marcar como disponible ↩" : "Marcar como canjeado ✅";
-
-      modal.classList.add("open");
-      modal.setAttribute("aria-hidden", "false");
-      lockBody();
-    };
-
-    const closeCoupon = () => {
-      modal.classList.remove("open");
-      modal.setAttribute("aria-hidden", "true");
-      unlockBody();
-    };
-
-    $$("[data-close-coupon]").forEach(el => el.addEventListener("click", closeCoupon));
-
-    btnToggle.addEventListener("click", () => {
-      if (!currentId) return;
-      used[currentId] = !used[currentId];
-      localStorage.setItem(KEY, JSON.stringify(used));
-      btnToggle.textContent = used[currentId] ? "Marcar como disponible ↩" : "Marcar como canjeado ✅";
-      render();
-    });
-
-    btnRandom?.addEventListener("click", () => {
-      const available = coupons.filter(c => !used[c.id]);
-      const pick = (available.length ? available : coupons)[Math.floor(Math.random() * (available.length ? available.length : coupons.length))];
-      openCoupon(pick.id);
-    });
-
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && modal.classList.contains("open")) closeCoupon();
-    });
-
-    render();
-  }
-
-  // ========= Init =========
-  function init() {
-    wireWhatsApp();
-    mountGlobalUI();
-    setupLightbox();
-
-    const page = document.body?.dataset?.page || "";
-    if (page === "recuerdos") renderRecuerdos();
-    if (page === "citas") setupCitas();
-    if (page === "cupones") setupCupones();
-  }
-
-  document.addEventListener("DOMContentLoaded", init);
 })();
