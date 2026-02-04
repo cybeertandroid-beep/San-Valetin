@@ -166,6 +166,7 @@
         <div class="trackRow" id="trackRow"></div>
       </div>
     `;
+    setTimeout(updateDockOffsets, 0);
 
     const btnToggle = dock.querySelector('[data-act="toggle"]');
     const btnPrev = dock.querySelector('[data-act="prev"]');
