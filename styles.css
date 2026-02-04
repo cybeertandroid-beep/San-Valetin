@@ -1,5 +1,5 @@
 /* =========================
-   SAN-VALETIN - THEME v2
+   SAN-VALETIN - THEME v2 (FIXED)
    ========================= */
 
 :root{
@@ -56,6 +56,8 @@ button{font-family:inherit}
   max-width: var(--max);
   margin: 0 auto;
   padding: 28px 16px 24px;
+  position: relative;
+  z-index: 2; /* contenido encima de corazones */
 }
 
 .top-kicker{
@@ -175,8 +177,13 @@ h1{
    ========================= */
 #countdownDock{
   position: fixed;
-  z-index: 50;
-  top: calc(env(safe-area-inset-top) + 12px);
+  z-index: 60;
+
+  /* fallback para navegadores sin env()/constant() */
+  top: 12px;
+  top: calc(constant(safe-area-inset-top) + 12px);
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+
   left: 14px;
   width: min(460px, calc(100vw - 28px));
   background: rgba(255,255,255,.76);
@@ -291,8 +298,17 @@ h1{
 
 .lb-close{
   position: fixed;
-  top: calc(env(safe-area-inset-top) + 14px);
-  right: calc(env(safe-area-inset-right) + 14px);
+
+  /* fallback */
+  top: 14px;
+  right: 14px;
+
+  top: calc(constant(safe-area-inset-top) + 14px);
+  top: calc(env(safe-area-inset-top, 0px) + 14px);
+
+  right: calc(constant(safe-area-inset-right) + 14px);
+  right: calc(env(safe-area-inset-right, 0px) + 14px);
+
   width: 44px;
   height: 44px;
   border-radius: 14px;
@@ -305,6 +321,7 @@ h1{
   place-items:center;
   cursor:pointer;
 }
+
 .lb-stage{
   position: absolute;
   inset: 0;
@@ -322,14 +339,20 @@ h1{
 }
 
 /* =========================
-   PLAYER DOCK (BOTTOM)
+   PLAYER DOCK (BOTTOM) - FIXED
    ========================= */
 #playerDock{
-  position: fixed;
-  z-index: 60;
+  position: fixed !important;
+  z-index: 70;
+
   left: 50%;
-  transform: translateX(-50%);
-  bottom: calc(env(safe-area-inset-bottom) + 12px);
+  transform: translateX(-50%) !important;
+
+  /* fallback + iOS old + iOS new */
+  bottom: 12px;
+  bottom: calc(constant(safe-area-inset-bottom) + 12px);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+
   width: min(560px, calc(100vw - 26px));
   background: rgba(255,255,255,.85);
   border: 1px solid rgba(255,79,152,.20);
@@ -338,6 +361,11 @@ h1{
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   overflow:hidden;
+
+  top: auto !important;
+  right: auto !important;
+  margin: 0 !important;
+  inset: auto !important;
 }
 
 .player-bar{
@@ -453,8 +481,9 @@ h1{
   to{ transform: translateY(-120vh) scale(1.15); opacity:0; }
 }
 
-/* content above hearts */
-.wrap, #countdownDock, #playerDock { position: relative; z-index: 2; }
+/* Docks encima de todo el contenido (sin romper fixed) */
+#countdownDock{ z-index: 60; }
+#playerDock{ z-index: 70; }
 
 /* =========================
    Lists / checkboxes
@@ -515,20 +544,3 @@ h1{
   text-align:center;
 }
 .notice.show{ display:block; }
-
-/* === FIX: Player SIEMPRE abajo (override) === */
-#playerDock{
-  position: fixed !important;
-  top: auto !important;
-  left: 50% !important;
-  right: auto !important;
-  transform: translateX(-50%) !important;
-  bottom: calc(env(safe-area-inset-bottom) + 12px) !important;
-
-  margin: 0 !important;
-  z-index: 9999 !important; /* por si algo lo tapa */
-}
-
-/* por si algún estilo raro le mete "inset" */
-#playerDock{ inset: auto !important; }
-
