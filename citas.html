@@ -42,7 +42,7 @@
 
         <div class="card pad" style="background:rgba(255,255,255,.70)">
           <p class="title-mini">🎲 Elige una cita al azar amor</p>
-          <p class="sub" style="text-align:left;margin:6px 0 0">O presiona el botón y te sale una idea.</p>
+          <p class="sub" style="text-align:left;margin:6px 0 0">Presiona el botón y te sale una idea.</p>
 
           <div class="pills" style="justify-content:flex-start">
             <button class="btn primary" id="pickCita" type="button">Elegir cita ✨</button>
@@ -54,27 +54,27 @@
         </div>
 
         <div class="section">
-          <p class="title-mini">Lista de citas (checklist) 💗</p>
+          <p class="title-mini">Lista de citas 💗</p>
 
           <div class="list" data-store="sv_citas_check">
             <label class="item">
               <input type="checkbox" data-id="c1">
-              <div><h3>🍽️ Cena romántica 💗</h3><p>Una cena (con postre osea tu).</p></div>
+              <div><h3>🍽️ Cena romántica 💗</h3><p>Una cena (con postre sí o sí).</p></div>
             </label>
 
             <label class="item">
               <input type="checkbox" data-id="c2">
-              <div><h3>🍦 caminata de noche y conversar de nuestro futuro 🌙</h3><p>paseo, conversar y fotos.</p></div>
+              <div><h3>🌙 Caminata de noche + hablar de nuestro futuro</h3><p>Paseo, conversar y fotos.</p></div>
             </label>
 
             <label class="item">
               <input type="checkbox" data-id="c3">
-              <div><h3>🎬 Peli juntos </h3><p>En el cine, playa o aribnb .</p></div>
+              <div><h3>🎬 Peli juntos</h3><p>En el cine, playa o airbnb.</p></div>
             </label>
 
             <label class="item">
               <input type="checkbox" data-id="c4">
-              <div><h3>📸 Fotos juntos en un lugar bonito</h3><p>Un lugar lindo y tú brillando.</p></div>
+              <div><h3>📸 Fotos en un lugar bonito</h3><p>Un lugar lindo y tú brillando.</p></div>
             </label>
 
             <label class="item">
@@ -83,13 +83,13 @@
             </label>
 
             <label class="item">
-              <input type="checkbox" data-id="c5">
-              <div><h3>🍵 Chocolate caliente y postres</h3><p>Para mi cafe y para ti chocolate jaja.</p></div>
+              <input type="checkbox" data-id="c6">
+              <div><h3>🍫 Chocolate caliente y postres</h3><p>Para mí café, para ti chocolate jaja.</p></div>
             </label>
 
             <label class="item">
-              <input type="checkbox" data-id="c5">
-              <div><h3>🔥 Dia de sexo </h3><p>Juntos todo el día mi amor</p></div>
+              <input type="checkbox" data-id="c7">
+              <div><h3>🔥 Día de pasión</h3><p>Un día juntitos, sin apuro.</p></div>
             </label>
           </div>
         </div>
@@ -103,17 +103,5 @@
       </div>
     </div>
   </main>
-
-  <script>
-    // Caja de salida (solo UI)
-    document.addEventListener("DOMContentLoaded", () => {
-      const out = document.getElementById("citaOut");
-      const box = document.getElementById("citaBox");
-      const btn = document.getElementById("pickCita");
-      if(btn && box && out){
-        btn.addEventListener("click", () => box.classList.add("show"));
-      }
-    });
-  </script>
 </body>
 </html>
