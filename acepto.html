@@ -3,65 +3,77 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Gracias 💗</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
+  <meta name="theme-color" content="#ff79b2" />
+  <title>¿Aceptas? 💘</title>
 
-  <div class="countdown-wrap">
-    <div id="countdown" class="countdown" data-target="2026-04-12T00:00:00-05:00">
-      <div class="countdown-title"><span>Faltan para volver a vernos</span><span>💗</span></div>
-      <div class="countdown-grid">
-        <div class="cd-box"><div id="cd_days" class="cd-num">--</div><div class="cd-lbl">DÍAS</div></div>
-        <div class="cd-box"><div id="cd_hrs"  class="cd-num">--</div><div class="cd-lbl">HRS</div></div>
-        <div class="cd-box"><div id="cd_min"  class="cd-num">--</div><div class="cd-lbl">MIN</div></div>
-        <div class="cd-box"><div id="cd_sec"  class="cd-num">--</div><div class="cd-lbl">SEG</div></div>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="countdown.js"></script>
+  <script defer src="app.js"></script>
+</head>
+
+<body>
+  <aside id="countdownDock" data-target="2026-04-12T00:00:00-05:00">
+    <div class="cd-head">
+      <div>Faltan para volver a vernos 💗</div>
+      <div class="cd-heart">💗</div>
+    </div>
+    <div class="cd-grid">
+      <div class="cd-cell"><div class="cd-num" data-cd="days">--</div><div class="cd-lab">DÍAS</div></div>
+      <div class="cd-cell"><div class="cd-num" data-cd="hours">--</div><div class="cd-lab">HRS</div></div>
+      <div class="cd-cell"><div class="cd-num" data-cd="mins">--</div><div class="cd-lab">MIN</div></div>
+      <div class="cd-cell"><div class="cd-num" data-cd="secs">--</div><div class="cd-lab">SEG</div></div>
+    </div>
+  </aside>
+
+  <div id="playerDock"></div>
+
+  <main>
+    <div class="wrap">
+      <div class="card pad" id="aceptoBox">
+        <div class="top-kicker">💘 Acepto</div>
+        <h1>Solo una preguntita…</h1>
+        <p class="sub">Prometo cuidarte bonito 💗</p>
+
+        <hr class="hr"/>
+
+        <div class="bigAsk">
+          <div class="q">¿Quieres ser mi 14 de febrero? 💘</div>
+
+          <div class="choices">
+            <button class="btn primary" id="btnYes" type="button">Sí 💗</button>
+            <button class="btn" id="btnNo" type="button">No 🥺</button>
+          </div>
+
+          <!-- Se muestra solo al aceptar -->
+          <div class="notice" id="accepted">
+            <div style="font-weight:900;color:#2b2430">AAAA 😳💗 ¡SÍ! Me hiciste el día.</div>
+            <p style="margin:8px 0 0;color:#6b5a6a">
+              Ahora sí… ve a WhatsApp y dime “hola” (sin mensaje automático).
+            </p>
+            <div class="center" style="margin-top:10px">
+              <a class="btn primary" href="https://wa.me/51990367042" target="_blank" rel="noopener">Abrir WhatsApp 💗</a>
+            </div>
+          </div>
+
+          <div class="notice" id="declined">
+            <div style="font-weight:900;color:#2b2430">No acepto ese “no” 😤💗</div>
+            <p style="margin:8px 0 0;color:#6b5a6a">Vuelve a intentarlo…</p>
+          </div>
+        </div>
+
+        <div class="pills" style="margin-top:18px">
+          <a class="pill" href="index.html">Inicio ↩</a>
+          <a class="pill" href="recuerdos.html">Recuerdos 💗</a>
+          <a class="pill" href="citas.html">Citas ✨</a>
+          <a class="pill" href="cupones.html">Cupones 💗</a>
+          <a class="pill" href="amo.html">5 cosas que amo 💗</a>
+        </div>
       </div>
     </div>
-  </div>
-
-  <audio id="bgm" preload="auto" loop playsinline>
-    <source src="audio/uwaie.mp3" type="audio/mpeg">
-  </audio>
-
-  <div id="player" class="player-wrap" aria-label="Reproductor de música">
-    <button id="playerBtn" class="player-btn" aria-label="Toca para reproducir" aria-pressed="false">
-      <span class="icon play"></span>
-    </button>
-    <div class="player-text">Toca para reproducir</div>
-    <button id="playerMini" class="player-mini" aria-label="Minimizar">▾</button>
-  </div>
-
-  <main class="page">
-    <div class="container">
-      <section class="card">
-        <div class="kicker">💗</div>
-        <h1>Gracias mi amor por aceptarme 💗</h1>
-        <p class="subtitle">Aunque sea a la distancia… siempre te voy a amar.</p>
-
-        <div class="letter">
-          <p>
-            Sé que ahora será diferente… pero más adelante lo celebraremos como se debe juntos mi amor.
-          </p>
-          <p style="margin-bottom:0;"><b>PD:</b> Llegando, nuestra cita queda pendiente 💗</p>
-        </div>
-
-        <div class="actions">
-          <a class="btn btn-primary" data-wa="open" href="#">Abrir WhatsApp 💬</a>
-          <a class="btn btn-ghost" href="index.html">Inicio ↩</a>
-          <a class="btn btn-ghost" href="recuerdos.html">Recuerdos 💗</a>
-        </div>
-      </section>
-    </div>
   </main>
-
-  <div id="modal" class="modal" aria-hidden="true">
-    <button id="modalClose" class="modal-close" aria-label="Cerrar">✕</button>
-    <div class="modal-box">
-      <img id="modalImg" class="modal-img" alt="Foto ampliada">
-    </div>
-  </div>
-
-  <script src="shared.js"></script>
 </body>
 </html>
