@@ -1,5 +1,5 @@
 /* =========================
-   SAN-VALETIN - THEME v2 (FIXED)
+   SAN-VALETIN - THEME (FINAL)
    ========================= */
 
 :root{
@@ -9,6 +9,7 @@
 
   --card:#ffffffcc;
   --cardSolid:#fff;
+
   --ink:#2b2430;
   --muted:#6b5a6a;
 
@@ -24,40 +25,42 @@
 
   --max: 980px;
 
-  /* se calculan en JS según altura de contador y reproductor */
+  /* Se calculan en JS según altura de contador y player */
   --topDock: 110px;
   --bottomDock: 90px;
 }
 
-*{box-sizing:border-box}
-html,body{height:100%}
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
 body{
   margin:0;
   color:var(--ink);
-  font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-family:"Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
   background:
     radial-gradient(1100px 650px at 15% 10%, var(--bg1), transparent 60%),
     radial-gradient(900px 600px at 85% 20%, var(--bg3), transparent 60%),
     linear-gradient(180deg, var(--bg2), #fff 110%);
+
   overflow-x:hidden;
 }
 
-/* para que el contenido no quede tapado por el contador y el player */
+a{ color:inherit; }
+img{ max-width:100%; display:block; }
+button{ font-family:inherit; }
+
+/* Para que el contenido no quede tapado por el contador y el player */
 main{
   padding-top: calc(var(--topDock) + 10px);
   padding-bottom: calc(var(--bottomDock) + 10px);
 }
-
-a{color:inherit}
-img{max-width:100%; display:block}
-button{font-family:inherit}
 
 .wrap{
   max-width: var(--max);
   margin: 0 auto;
   padding: 28px 16px 24px;
   position: relative;
-  z-index: 2; /* contenido encima de corazones */
+  z-index: 5; /* arriba de corazones */
 }
 
 .top-kicker{
@@ -111,7 +114,7 @@ h1{
   line-height: 1.7;
   font-size: 15.5px;
 }
-.letter b{color:#2d2230}
+.letter b{ color:#2d2230; }
 
 .title-mini{
   font-weight:700;
@@ -142,8 +145,8 @@ h1{
   box-shadow: 0 10px 22px rgba(0,0,0,.06);
   text-decoration:none;
   font-weight:600;
+  transition: transform .12s ease;
 }
-
 .pill:hover{ transform: translateY(-1px); }
 .pill:active{ transform: translateY(0px); }
 
@@ -159,11 +162,15 @@ h1{
   box-shadow: 0 14px 28px rgba(255,79,152,.18);
   text-decoration:none;
   font-weight:800;
+  cursor:pointer;
+  transition: transform .12s ease;
 }
+.btn:active{ transform: scale(.99); }
+
 .btn.primary{
   background: linear-gradient(135deg, var(--pink), var(--pink2));
-  color: #fff;
-  border: none;
+  color:#fff;
+  border:none;
 }
 .btn.big{
   width: min(560px, 100%);
@@ -177,13 +184,8 @@ h1{
    ========================= */
 #countdownDock{
   position: fixed;
-  z-index: 60;
-
-  /* fallback para navegadores sin env()/constant() */
-  top: 12px;
-  top: calc(constant(safe-area-inset-top) + 12px);
+  z-index: 2000;
   top: calc(env(safe-area-inset-top, 0px) + 12px);
-
   left: 14px;
   width: min(460px, calc(100vw - 28px));
   background: rgba(255,255,255,.76);
@@ -248,9 +250,7 @@ h1{
 /* =========================
    GALLERY
    ========================= */
-.section{
-  margin-top: 18px;
-}
+.section{ margin-top: 18px; }
 
 .grid{
   display:grid;
@@ -288,7 +288,7 @@ h1{
 #lightbox{
   position: fixed;
   inset: 0;
-  z-index: 999;
+  z-index: 99999;
   display:none;
   background: rgba(10,8,12,.62);
   backdrop-filter: blur(10px);
@@ -298,17 +298,8 @@ h1{
 
 .lb-close{
   position: fixed;
-
-  /* fallback */
-  top: 14px;
-  right: 14px;
-
-  top: calc(constant(safe-area-inset-top) + 14px);
   top: calc(env(safe-area-inset-top, 0px) + 14px);
-
-  right: calc(constant(safe-area-inset-right) + 14px);
   right: calc(env(safe-area-inset-right, 0px) + 14px);
-
   width: 44px;
   height: 44px;
   border-radius: 14px;
@@ -329,6 +320,7 @@ h1{
   place-items:center;
   padding: 70px 16px 90px;
 }
+
 .lb-img{
   max-width: min(980px, 96vw);
   max-height: min(82vh, 860px);
@@ -339,19 +331,23 @@ h1{
 }
 
 /* =========================
-   PLAYER DOCK (BOTTOM) - FIXED
+   PLAYER DOCK (BOTTOM)
    ========================= */
+/* Este bloque es el que manda. NO uses inset aquí. */
 #playerDock{
   position: fixed !important;
-  z-index: 70;
+  z-index: 3000;
 
-  left: 50%;
+  left: 50% !important;
   transform: translateX(-50%) !important;
 
-  /* fallback + iOS old + iOS new */
-  bottom: 12px;
-  bottom: calc(constant(safe-area-inset-bottom) + 12px);
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+  /* fallback + iOS viejo + iOS nuevo */
+  bottom: 12px !important;
+  bottom: calc(constant(safe-area-inset-bottom) + 12px) !important;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 12px) !important;
+
+  top: auto !important;
+  right: auto !important;
 
   width: min(560px, calc(100vw - 26px));
   background: rgba(255,255,255,.85);
@@ -361,11 +357,6 @@ h1{
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   overflow:hidden;
-
-  top: auto !important;
-  right: auto !important;
-  margin: 0 !important;
-  inset: auto !important;
 }
 
 .player-bar{
@@ -424,9 +415,7 @@ h1{
 }
 #playerDock.expanded .player-panel{ display:block; }
 
-.seek{
-  width:100%;
-}
+.seek{ width:100%; }
 .seek input[type="range"]{
   width:100%;
   accent-color: var(--pink);
@@ -438,6 +427,7 @@ h1{
   font-size: 12px;
   margin-top: 6px;
 }
+
 .trackRow{
   margin-top: 10px;
   display:flex;
@@ -476,14 +466,10 @@ h1{
   animation: floatUp linear forwards;
 }
 @keyframes floatUp{
-  from{ transform: translateY(30px) scale(.9); opacity:.0; }
+  from{ transform: translateY(30px) scale(.9); opacity:0; }
   15%{ opacity:.22; }
   to{ transform: translateY(-120vh) scale(1.15); opacity:0; }
 }
-
-/* Docks encima de todo el contenido (sin romper fixed) */
-#countdownDock{ z-index: 60; }
-#playerDock{ z-index: 70; }
 
 /* =========================
    Lists / checkboxes
@@ -511,7 +497,11 @@ h1{
   color: var(--muted);
   line-height: 1.4;
 }
-.item input{ margin-top: 5px; transform: scale(1.1); accent-color: var(--pink); }
+.item input{
+  margin-top: 5px;
+  transform: scale(1.1);
+  accent-color: var(--pink);
+}
 
 /* =========================
    Acepto page
@@ -533,6 +523,7 @@ h1{
   justify-content:center;
   margin-top: 6px;
 }
+
 .notice{
   display:none;
   margin-top: 14px;
@@ -544,3 +535,9 @@ h1{
   text-align:center;
 }
 .notice.show{ display:block; }
+
+/* =========================
+   IMPORTANT: NO inset para docks
+   ========================= */
+/* NO pongas nada tipo: #playerDock{ inset:auto } */
+/* NO pongas nada tipo: .wrap, #playerDock { position: relative } */
