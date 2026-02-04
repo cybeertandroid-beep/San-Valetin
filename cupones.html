@@ -3,106 +3,110 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#ff79b2" />
   <title>Cupones 💗</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800;900&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="styles.css" />
+  <script defer src="countdown.js"></script>
+  <script defer src="app.js"></script>
 </head>
+
 <body>
-
-  <div class="countdown-wrap">
-    <div id="countdown" class="countdown" data-target="2026-04-12T00:00:00-05:00">
-      <div class="countdown-title">
-        <span>Faltan para volver a vernos</span><span>💗</span>
-      </div>
-      <div class="countdown-grid">
-        <div class="cd-box"><div id="cd_days" class="cd-num">--</div><div class="cd-lbl">DÍAS</div></div>
-        <div class="cd-box"><div id="cd_hrs"  class="cd-num">--</div><div class="cd-lbl">HRS</div></div>
-        <div class="cd-box"><div id="cd_min"  class="cd-num">--</div><div class="cd-lbl">MIN</div></div>
-        <div class="cd-box"><div id="cd_sec"  class="cd-num">--</div><div class="cd-lbl">SEG</div></div>
-      </div>
+  <aside id="countdownDock" data-target="2026-04-12T00:00:00-05:00">
+    <div class="cd-head">
+      <div>Faltan para volver a vernos 💗</div>
+      <div class="cd-heart">💗</div>
     </div>
-  </div>
+    <div class="cd-grid">
+      <div class="cd-cell"><div class="cd-num" data-cd="days">--</div><div class="cd-lab">DÍAS</div></div>
+      <div class="cd-cell"><div class="cd-num" data-cd="hours">--</div><div class="cd-lab">HRS</div></div>
+      <div class="cd-cell"><div class="cd-num" data-cd="mins">--</div><div class="cd-lab">MIN</div></div>
+      <div class="cd-cell"><div class="cd-num" data-cd="secs">--</div><div class="cd-lab">SEG</div></div>
+    </div>
+  </aside>
 
-  <audio id="bgm" preload="auto" loop playsinline>
-    <source src="audio/uwaie.mp3" type="audio/mpeg">
-  </audio>
+  <div id="playerDock"></div>
 
-  <div id="player" class="player-wrap" aria-label="Reproductor de música">
-    <button id="playerBtn" class="player-btn" aria-label="Toca para reproducir" aria-pressed="false">
-      <span class="icon play"></span>
-    </button>
-    <div class="player-text">Toca para reproducir</div>
-    <button id="playerMini" class="player-mini" aria-label="Minimizar">▾</button>
-  </div>
+  <main>
+    <div class="wrap">
+      <div class="card pad">
+        <div class="top-kicker">Cupones 💗</div>
+        <h1>Cupones que puedes canjear conmigo</h1>
+        <p class="sub">Cuando llegues… yo cumplo 💗</p>
 
-  <main class="page">
-    <div class="container">
-      <section class="card">
-        <div class="kicker">Cupones 💗</div>
-        <h1>Cupones para canjear cuando vuelvas 💗</h1>
-        <p class="subtitle">Elige uno… y yo cumplo 😌💗</p>
+        <hr class="hr"/>
 
-        <div class="hr"></div>
-
-        <div class="stack" data-store="couponsChecklist">
-          <div class="item">
-            <h4>🍝 Cena romántica</h4>
-            <p>Una cena bonita (con postre sí o sí).</p>
-            <div class="check" style="margin-top:10px;">
-              <input id="c1" type="checkbox"><label for="c1"><b>Canjeado</b></label>
-            </div>
+        <div class="card pad" style="background:rgba(255,255,255,.70)">
+          <p class="title-mini">🎟️ Cupón sorpresa</p>
+          <p class="sub" style="text-align:left;margin:6px 0 0">Toca el botón y te sale uno.</p>
+          <div class="pills" style="justify-content:flex-start">
+            <button class="btn primary" id="pickCupon" type="button">Elegir cupón sorpresa ✨</button>
           </div>
 
-          <div class="item">
-            <h4>🍦 Helado + paseo</h4>
-            <p>Helado, caminata, y muchas fotos juntos.</p>
-            <div class="check" style="margin-top:10px;">
-              <input id="c2" type="checkbox"><label for="c2"><b>Canjeado</b></label>
-            </div>
-          </div>
-
-          <div class="item">
-            <h4>🎬 Noche de pelis</h4>
-            <p>Peli, mantita, besitos, y cero estrés.</p>
-            <div class="check" style="margin-top:10px;">
-              <input id="c3" type="checkbox"><label for="c3"><b>Canjeado</b></label>
-            </div>
-          </div>
-
-          <div class="item">
-            <h4>🌹 Cita sorpresa</h4>
-            <p>No te digo cuál… pero te va a encantar.</p>
-            <div class="check" style="margin-top:10px;">
-              <input id="c4" type="checkbox"><label for="c4"><b>Canjeado</b></label>
-            </div>
-          </div>
-
-          <div class="item">
-            <h4>🧸 Día de mimos</h4>
-            <p>Abrazos largos, cariñitos y un día solo para ti.</p>
-            <div class="check" style="margin-top:10px;">
-              <input id="c5" type="checkbox"><label for="c5"><b>Canjeado</b></label>
-            </div>
+          <div class="notice" id="cuponBox">
+            <div style="font-weight:900;color:#2b2430" id="cuponOut">—</div>
           </div>
         </div>
 
-        <div class="actions" style="margin-top:20px;">
-          <a class="btn btn-ghost" href="index.html">Inicio ↩</a>
-          <a class="btn btn-ghost" href="recuerdos.html">Recuerdos 💗</a>
-          <a class="btn btn-ghost" href="citas.html">Citas ✨</a>
-          <a class="btn btn-primary" data-wa="open" href="#">Abrir WhatsApp 💗</a>
+        <div class="section">
+          <p class="title-mini">Lista de cupones (checklist) 💗</p>
+
+          <div class="list" data-store="sv_cupones_check">
+            <label class="item">
+              <input type="checkbox" data-id="u1">
+              <div><h3>💗 Cupón: Un beso infinito</h3><p>Canjeable por besos ilimitados (mínimo 10) cuando nos veamos.</p></div>
+            </label>
+
+            <label class="item">
+              <input type="checkbox" data-id="u2">
+              <div><h3>🫶 Cupón: Abrazo largo</h3><p>Mínimo 2 minutos sin soltar.</p></div>
+            </label>
+
+            <label class="item">
+              <input type="checkbox" data-id="u3">
+              <div><h3>🍽️ Cupón: Cena bonita</h3><p>Con postre sí o sí.</p></div>
+            </label>
+
+            <label class="item">
+              <input type="checkbox" data-id="u4">
+              <div><h3>🌹 Cupón: Cita sorpresa</h3><p>No te digo cuál… pero te va a encantar.</p></div>
+            </label>
+
+            <label class="item">
+              <input type="checkbox" data-id="u5">
+              <div><h3>🎬 Cupón: Noche de pelis</h3><p>Peli, mantita, besitos y cero estrés.</p></div>
+            </label>
+
+            <label class="item">
+              <input type="checkbox" data-id="u6">
+              <div><h3>🧸 Cupón: Día de mimos</h3><p>Abrazos, cariñitos y un día solo para ti.</p></div>
+            </label>
+          </div>
         </div>
 
-      </section>
+        <div class="pills" style="margin-top:18px">
+          <a class="pill" href="index.html">Inicio ↩</a>
+          <a class="pill" href="recuerdos.html">Recuerdos 💗</a>
+          <a class="pill" href="citas.html">Citas ✨</a>
+          <a class="pill" href="amo.html">5 cosas que amo 💗</a>
+        </div>
+      </div>
     </div>
   </main>
 
-  <div id="modal" class="modal" aria-hidden="true">
-    <button id="modalClose" class="modal-close" aria-label="Cerrar">✕</button>
-    <div class="modal-box">
-      <img id="modalImg" class="modal-img" alt="Foto ampliada">
-    </div>
-  </div>
-
-  <script src="shared.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const out = document.getElementById("cuponOut");
+      const box = document.getElementById("cuponBox");
+      const btn = document.getElementById("pickCupon");
+      if(btn && box && out){
+        btn.addEventListener("click", () => box.classList.add("show"));
+      }
+    });
+  </script>
 </body>
 </html>
