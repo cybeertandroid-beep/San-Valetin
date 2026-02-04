@@ -1,29 +1,34 @@
 (() => {
-  // 11 Abril 2026 00:00:00 hora Perú (-05:00)
-  const TARGET = new Date("2026-04-11T00:00:00-05:00").getTime();
+  const dock = document.getElementById("countdownDock");
+  if (!dock) return;
 
-  const cdDays  = document.getElementById('cdDays');
-  const cdHours = document.getElementById('cdHours');
-  const cdMins  = document.getElementById('cdMins');
-  const cdSecs  = document.getElementById('cdSecs');
+  // ✅ Cambia SOLO esta fecha si quieres (retorno / reencuentro)
+  // Formato recomendado: 2026-04-12T00:00:00-05:00
+  const fallbackTarget = "2026-04-12T00:00:00-05:00";
+  const targetStr = dock.getAttribute("data-target") || fallbackTarget;
+  const target = new Date(targetStr);
 
-  if (!cdDays || !cdHours || !cdMins || !cdSecs) return;
+  const elDays = dock.querySelector('[data-cd="days"]');
+  const elHours = dock.querySelector('[data-cd="hours"]');
+  const elMins = dock.querySelector('[data-cd="mins"]');
+  const elSecs = dock.querySelector('[data-cd="secs"]');
 
-  const pad2 = (n) => String(n).padStart(2, '0');
+  function pad(n){ return String(n).padStart(2, "0"); }
 
   function tick(){
-    let diff = TARGET - Date.now();
-    if (diff < 0) diff = 0;
+    const now = new Date();
+    let diff = Math.max(0, target - now);
 
-    const d = Math.floor(diff / (1000*60*60*24));
-    const h = Math.floor((diff / (1000*60*60)) % 24);
-    const m = Math.floor((diff / (1000*60)) % 60);
-    const s = Math.floor((diff / 1000) % 60);
+    const sec = Math.floor(diff / 1000);
+    const days = Math.floor(sec / 86400);
+    const hours = Math.floor((sec % 86400) / 3600);
+    const mins = Math.floor((sec % 3600) / 60);
+    const secs = sec % 60;
 
-    cdDays.textContent  = String(d);
-    cdHours.textContent = pad2(h);
-    cdMins.textContent  = pad2(m);
-    cdSecs.textContent  = pad2(s);
+    if (elDays) elDays.textContent = days;
+    if (elHours) elHours.textContent = pad(hours);
+    if (elMins) elMins.textContent = pad(mins);
+    if (elSecs) elSecs.textContent = pad(secs);
   }
 
   tick();
