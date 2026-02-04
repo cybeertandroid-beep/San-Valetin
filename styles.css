@@ -46,8 +46,6 @@ body{
 main{
   padding-top: calc(var(--topDock) + 10px);
   padding-bottom: calc(var(--bottomDock) + 10px);
-  position: relative;
-  z-index: 2;
 }
 
 a{color:inherit}
@@ -58,8 +56,6 @@ button{font-family:inherit}
   max-width: var(--max);
   margin: 0 auto;
   padding: 28px 16px 24px;
-  position: relative;
-  z-index: 2; /* arriba de corazones */
 }
 
 .top-kicker{
@@ -179,8 +175,8 @@ h1{
    ========================= */
 #countdownDock{
   position: fixed;
-  z-index: 5000;
-  top: calc(env(safe-area-inset-top, 0px) + 12px);
+  z-index: 1100;
+  top: calc(env(safe-area-inset-top) + 12px);
   left: 14px;
   width: min(460px, calc(100vw - 28px));
   background: rgba(255,255,255,.76);
@@ -245,9 +241,7 @@ h1{
 /* =========================
    GALLERY
    ========================= */
-.section{
-  margin-top: 18px;
-}
+.section{ margin-top: 18px; }
 
 .grid{
   display:grid;
@@ -285,7 +279,7 @@ h1{
 #lightbox{
   position: fixed;
   inset: 0;
-  z-index: 99999;
+  z-index: 20000; /* SIEMPRE encima del player */
   display:none;
   background: rgba(10,8,12,.62);
   backdrop-filter: blur(10px);
@@ -293,30 +287,10 @@ h1{
 }
 #lightbox.open{ display:block; }
 
-/* stage NO tapa la X */
-.lb-stage{
-  position: absolute;
-  inset: 0;
-  display:grid;
-  place-items:center;
-  padding: 70px 16px 90px;
-  pointer-events: none;
-}
-
-.lb-img{
-  max-width: min(980px, 96vw);
-  max-height: min(82vh, 860px);
-  border-radius: 22px;
-  box-shadow: 0 30px 80px rgba(0,0,0,.55);
-  background: #111;
-  object-fit: contain;
-  pointer-events: auto;
-}
-
 .lb-close{
   position: fixed;
-  top: calc(env(safe-area-inset-top, 0px) + 14px);
-  right: calc(env(safe-area-inset-right, 0px) + 14px);
+  top: calc(env(safe-area-inset-top) + 14px);
+  right: calc(env(safe-area-inset-right) + 14px);
   width: 44px;
   height: 44px;
   border-radius: 14px;
@@ -328,20 +302,38 @@ h1{
   display:grid;
   place-items:center;
   cursor:pointer;
-  z-index: 100000;
-  pointer-events: auto;
-  touch-action: manipulation;
+  z-index: 2;           /* <-- clave */
+  pointer-events: auto; /* <-- clave */
+}
+.lb-stage{
+  position: absolute;
+  inset: 0;
+  z-index: 1; /* debajo del botón */
+  display:grid;
+  place-items:center;
+  padding: 70px 16px 90px;
+}
+.lb-img{
+  max-width: min(980px, 96vw);
+  max-height: min(82vh, 860px);
+  border-radius: 22px;
+  box-shadow: 0 30px 80px rgba(0,0,0,.55);
+  background: #111;
+  object-fit: contain;
 }
 
 /* =========================
-   PLAYER DOCK (BOTTOM)
+   PLAYER DOCK (BOTTOM) - FIX
    ========================= */
 #playerDock{
-  position: fixed;
-  z-index: 6000;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+  position: fixed !important;
+  z-index: 1200 !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  bottom: calc(env(safe-area-inset-bottom) + 12px) !important;
+  top: auto !important;
+  right: auto !important;
+
   width: min(560px, calc(100vw - 26px));
   background: rgba(255,255,255,.85);
   border: 1px solid rgba(255,79,152,.20);
@@ -350,6 +342,7 @@ h1{
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   overflow:hidden;
+  margin: 0 !important;
 }
 
 .player-bar{
@@ -380,10 +373,7 @@ h1{
 }
 .pbtn:active{ transform: scale(.98); }
 
-.ptxt{
-  flex:1;
-  min-width: 0;
-}
+.ptxt{ flex:1; min-width: 0; }
 .ptitle{
   font-weight:900;
   font-size: 14px;
@@ -408,9 +398,6 @@ h1{
 }
 #playerDock.expanded .player-panel{ display:block; }
 
-.seek{
-  width:100%;
-}
 .seek input[type="range"]{
   width:100%;
   accent-color: var(--pink);
@@ -460,10 +447,13 @@ h1{
   animation: floatUp linear forwards;
 }
 @keyframes floatUp{
-  from{ transform: translateY(30px) scale(.9); opacity:.0; }
+  from{ transform: translateY(30px) scale(.9); opacity:0; }
   15%{ opacity:.22; }
   to{ transform: translateY(-120vh) scale(1.15); opacity:0; }
 }
+
+/* content above hearts */
+.wrap, #countdownDock, #playerDock { position: relative; z-index: 2; }
 
 /* =========================
    Lists / checkboxes
@@ -491,11 +481,22 @@ h1{
   color: var(--muted);
   line-height: 1.4;
 }
-.item input{
-  margin-top: 5px;
-  transform: scale(1.1);
-  accent-color: var(--pink);
+.item input{ margin-top: 5px; transform: scale(1.1); accent-color: var(--pink); }
+
+/* =========================
+   Notices
+   ========================= */
+.notice{
+  display:none;
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.72);
+  border: 1px solid rgba(255,79,152,.18);
+  color: var(--muted);
+  text-align:center;
 }
+.notice.show{ display:block; }
 
 /* =========================
    Acepto page
@@ -516,24 +517,4 @@ h1{
   flex-wrap:wrap;
   justify-content:center;
   margin-top: 6px;
-}
-.notice{
-  display:none;
-  margin-top: 14px;
-  padding: 14px;
-  border-radius: 18px;
-  background: rgba(255,255,255,.72);
-  border: 1px solid rgba(255,79,152,.18);
-  color: var(--muted);
-  text-align:center;
-}
-.notice.show{ display:block; }
-
-/* === FIX EXTRA: player SIEMPRE abajo, por si algún otro CSS lo pisa === */
-#playerDock{
-  top: auto !important;
-  right: auto !important;
-  left: 50% !important;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 12px) !important;
-  transform: translateX(-50%) !important;
 }
