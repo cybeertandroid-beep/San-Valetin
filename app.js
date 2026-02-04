@@ -7,18 +7,20 @@
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
-  // ---------- Layout offsets (no tapar contenido) ----------
-function updateDockOffsets(){
-  const cd = $("#countdownDock");
-  const pd = $("#playerDock");
+  function updateDockOffsets(){
+  const cd = document.querySelector("#countdownDock");
+  const pd = document.querySelector("#playerDock");
 
-  // antes +26: dejaba demasiado aire
-  const top = cd ? cd.getBoundingClientRect().height + 12 : 34;
-  const bottom = pd ? pd.getBoundingClientRect().height + 14 : 34;
+  // ✅ topDock = parte de abajo REAL del contador + aire
+  const top = cd ? (cd.getBoundingClientRect().bottom + 10) : 34;
+
+  // ✅ bottomDock = altura real del player + aire (incluye safe-area)
+  const bottom = pd ? ((window.innerHeight - pd.getBoundingClientRect().top) + 10) : 34;
 
   document.documentElement.style.setProperty("--topDock", `${Math.ceil(top)}px`);
   document.documentElement.style.setProperty("--bottomDock", `${Math.ceil(bottom)}px`);
 }
+
 
   const scheduleOffsets = (() => {
     let t = null;
